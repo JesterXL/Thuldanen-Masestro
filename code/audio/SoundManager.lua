@@ -66,7 +66,6 @@ function SoundManager:new()
 	function manager:playGravityNote(note)
 		local name = "gravity" .. string.upper(note) .. "Sound"
 		local handle = self[name];
-		print(name, handle)
 		self:playNoteSound(handle)
 	end
 

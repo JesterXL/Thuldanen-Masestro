@@ -1,14 +1,25 @@
 require "physics"
---physics.setDrawMode("debug")
-physics.start()
-physics.setGravity(0, 9.8)
-physics.setPositionIterations( 10 )
-
-stage = display.getCurrentStage()
 
 display.setStatusBar( display.HiddenStatusBar )
 
-mainGroup = display.newGroup()
+local function setupGlobals()
+	require "utils.GameLoop"
+	_G.gameLoop = GameLoop:new()
+	gameLoop:start()
+
+	_G.mainGroup = display.newGroup()
+	mainGroup.classType = "mainGroup"
+	_G.stage = display.getCurrentStage()
+
+	_G._ = require "utils.underscore"
+end
+
+local function setupPhysics()
+	physics.setDrawMode("hybrid")
+	physics.start()
+	physics.setGravity(0, 9.8)
+	physics.setPositionIterations( 10 )
+end
 
 local function drawStageBorders()
 	local stage = display.getCurrentStage()
@@ -548,7 +559,7 @@ local function testLevel1Floors()
 	local floor1 = getFloor("floor-1", 0, 0)
 	local floor2 = getFloor("floor-2")
 	local floor3 = getFloor("floor-3")
-	floor1.y = stage.height - floor1.height
+	floor1.y = stage.height - (floor1.height + 80)
 	floor2.x = floor1.x + floor1.width
 	floor2.y = floor1.y + floor1.height - floor2.height
 	floor3.x = floor2.x + floor2.width
@@ -562,9 +573,24 @@ local function testNotes()
 	notes.y = stage.height - notes.height
 end
 
---testSphereRoll()
+local function testUnderscoreAll()
+	local notes = {"d", "e"}
+	local myNotes = {"d", "e"}
+	local counter = 0
+	local match = _.all(notes, function(songNote) 
+		counter = counter + 1
+		return songNote == myNotes[counter] 
+	end)
+	print(match)
+end
+
+
+setupGlobals()
+setupPhysics()
+
+testSphereRoll()
 --testGrapplePoints()
 --testVerlets()
---testLevel1Floors()
+testLevel1Floors()
 testNotes()
-
+--testUnderscoreAll()
