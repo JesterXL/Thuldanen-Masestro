@@ -1,4 +1,7 @@
+
 require "physics"
+
+
 
 display.setStatusBar( display.HiddenStatusBar )
 
@@ -16,6 +19,7 @@ end
 
 local function setupPhysics()
 	physics.setDrawMode("hybrid")
+	--physics.setDrawMode("normal")
 	physics.start()
 	physics.setGravity(0, 9.8)
 	physics.setPositionIterations( 10 )
@@ -126,7 +130,7 @@ local function testSphereRoll()
 	scrollScreen.lastScrollTime = system.getTimer()
 	function scrollScreen:enterFrame()
 		local w = mainGroup.width
-		local centerX = w / 2
+		local centerX = w / 3
 		local centerY = mainGroup.y
 		
 		local playerX, playerY = sphere:localToContent(0, 0)
@@ -536,13 +540,6 @@ local function testVerlets()
 	]]--
 end
 
-local function testFlashGeneratedGemotry()
-	local ground1 = getWallCustom({0,5, 95,-6, 344,34, 346,54, 205,15, 173,56, 2,1})
-	--local ground2 = getWallCustom({266,422, 264,477, 610,475, 608,455, 469,436, 437,477, 359,41})
-	--local ground3 = getWallCustom({771,238, 826,248, 822,476, 770,437, 725,453, 618,475, 614,453, 616,46})
-
-end
-
 local function testLevel1Floors()
 	local level1PhysicsData = (require "levels.level1").physicsData(1.0)
 	local function getFloor(name, x, y)
@@ -584,13 +581,152 @@ local function testUnderscoreAll()
 	print(match)
 end
 
+local function testSphereRollLevel1FloorsAndNotes()
+	testSphereRoll()
+	testLevel1Floors()
+	testNotes()
+end
+
+local function testGearJoint()
+	-- physics.newJoint( "gear", object1, object2, joint1, joint2 )
+	local circle1 = display.newCircle(0, 0, 30)
+	local circle2 = display.newCircle(0, 0, 30)
+	local rect1 = display.newRect(0, 0, 30, 6)
+	local rect2 = display.newRect(0, 0, 30, 6)
+	rect1:setFillColor(255, 0, 0)
+	rect2:setFillColor(255, 0, 0)
+	circle1.x = 100
+	circle1.y = 100
+
+	circle2.x = 200
+	circle2.y = 100
+
+	rect1.x = circle1.x - circle1.width / 2
+	rect1.y = circle1.y
+
+	rect2.x = circle2.x - circle2.width / 2
+	rect2.y = circle2.y
+	physics.addBody(circle1, "kinematic")
+	physics.addBody(circle2, "kinematic")
+	physics.addBody(rect1, "dynamic")
+	physics.addBody(rect2, "dynamic")
+
+	local joint1 = physics.newJoint("pivot", rect1, circle1, rect1.x + rect1.width, rect1.y)
+	local joint2 = physics.newJoint("pivot", rect2, circle2, rect2.x + rect2.width, rect2.y)
+	--local joint2 = physics.newJoint( "piston", rect2, circle2, rect2.x, rect2.x + rect2.y, circle2.width)
+	local joint = physics.newJoint("gear", joint1, joint2, circle1, circle2)
+
+	joint1.isMotorEnabled = true
+	joint1.maxMotorTorque = 100000
+	joint1.motorSpeed = 500
+end
+
+local function testCrystalCanisters()
+	require "gui.CrystalCanisters"
+	local group = CrystalCanisters:new()
+end
+
+local function test2Pistons()
+
+	local leftWall = getWall(30, stage.height)	
+	local rightWall = getWall(30, stage.height)
+	rightWall.x = stage.width - 30
+	local floor = getWall(stage.width, 30)
+	floor.y = stage.height - 30
+
+	local box = display.newRect(100, 100, 10, 10)
+	physics.addBody(box, "static")
+
+	local bar = display.newRect(100, 100, 10, 100)
+	bar:setFillColor(255, 0, 0)
+	physics.addBody(bar)
+	local piston = physics.newJoint("piston", box, bar, box.x, box.y, 0, box.y)
+
+	piston.isMotorEnabled = true
+	speed = 100
+	piston.maxMotorForce = 10
+	piston.motorSpeed = speed
+	piston.isLimitEnabled = true
+	piston:setLimits(20, 100)
+
+	local wedge = display.newRect(100, bar.y + bar.height / 2, 10, 10)
+	wedge:setFillColor(255, 255, 0)
+	physics.addBody(wedge)
+	local wedgeWeld = physics.newJoint("weld", wedge, bar, wedge.x, wedge.y)
+	local tiny = display.newRect(100, wedge.y + wedge.height + 30, 10, 50)
+	tiny:setFillColor(0, 255, 0)
+	physics.addBody(tiny)
+	local pistonTiny = physics.newJoint("piston", wedge, tiny, wedge.x, wedge.y + wedge.height / 2, 0, tiny.y)
+	pistonTiny.isMotorEnabled = true
+	pistonTiny.isFixedRotation = true
+	pistonTiny.maxMotorForce = 10
+	pistonTiny.motorSpeed = 0
+	pistonTiny.isLimitEnabled = true
+	pistonTiny:setLimits(0, 100)
+
+	direction = "out"
+
+	function change()
+		if direction == "out" then
+			direction = "in"
+			piston.motorSpeed = -speed
+		else
+			direction = "out"
+			piston.motorSpeed = speed
+		end	
+	end
+	--timer.performWithDelay(1000, change, 0)
+
+	local t = {}
+	function change2()
+		print(piston.jointTranslation )
+		if piston.jointTranslation >= 100 then
+			timer.cancel(t.id)
+			pistonTiny.motorSpeed = 200
+		end
+	end
+	t.id = timer.performWithDelay(1000, change2, 0)
+end
+
+local function testPistonBox()
+	require "gui.PistonBox"
+	local box = PistonBox:new()
+	box.x = 100
+	box.y = 100
+	box:startSpinningGears()
+	box:expandClaw()
+end
+
+local function testPlayer()
+	testLevel1Floors()
+	require "player.Player"
+	local player = Player:new()
+	player:translate(100, 100)
+
+	require "gui.MoveLeftButton"
+	require "gui.MoveRightButton"
+	local moveLeft = MoveLeftButton:new()
+	local moveRight = MoveRightButton:new()
+	moveLeft.y = stage.height - moveLeft.height
+	moveRight.y = moveLeft.y
+	moveRight.x = moveLeft.x + moveLeft.width + 20
+end
 
 setupGlobals()
 setupPhysics()
+--backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
+--backgroundRect:setFillColor(255, 255, 255)
 
-testSphereRoll()
+--testSphereRoll()
 --testGrapplePoints()
 --testVerlets()
-testLevel1Floors()
-testNotes()
+--testLevel1Floors()
+--testNotes()
 --testUnderscoreAll()
+--testSphereRollLevel1FloorsAndNotes()
+testPlayer()
+--testGearJoint()
+
+--testCrystalCanisters()
+--test2Pistons()
+--testPistonBox()

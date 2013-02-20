@@ -11,6 +11,8 @@ function SphereReadyState:new()
 		Runtime:addEventListener("Notes_onStopRoll", self)
 		Runtime:addEventListener("Notes_onMoveRight", self)
 		Runtime:addEventListener("Notes_onMoveLeft", self)
+		Runtime:addEventListener("Notes_onJumpLeft", self)
+		Runtime:addEventListener("Notes_onJumpRight", self)
 	end
 	
 	function state:onExitState(event)
@@ -19,6 +21,8 @@ function SphereReadyState:new()
 		Runtime:removeEventListener("Notes_onStopRoll", self)
 		Runtime:removeEventListener("Notes_onMoveRight", self)
 		Runtime:removeEventListener("Notes_onMoveLeft", self)
+		Runtime:removeEventListener("Notes_onJumpLeft", self)
+		Runtime:removeEventListener("Notes_onJumpRight", self)
 	end
 
 	function state:Notes_onStopRoll()
@@ -33,7 +37,14 @@ function SphereReadyState:new()
 	function state:Notes_onMoveLeft()
 		self.entity:startRollingLeft()
 	end
+	
+	function state:Notes_onJumpLeft()
+		self.entity:jumpLeft()
+	end
 
+	function state:Notes_onJumpRight()
+		self.entity:jumpRight()
+	end
 	return state
 end
 

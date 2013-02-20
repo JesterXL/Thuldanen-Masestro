@@ -9,7 +9,7 @@ function Sphere:new()
 	mainGroup:insert(sphere)
 	physics.addBody(sphere, "dynamic", {density=3, radius=30, bounce=0.2, friction=0.9})
 	sphere.angularDamping = 5
-	sphere.rollSpeed = 500
+	sphere.rollSpeed = 300
 	sphere.rollDirection = "right"
 	sphere.fsm = nil
 
@@ -43,6 +43,17 @@ function Sphere:new()
 	function sphere:stopRolling()
 		Runtime:removeEventListener("enterFrame", self)
 	end
+
+	function sphere:jumpRight()
+		print("sphere jump right")
+		self:applyLinearImpulse(60, 300, sphere.x, sphere.y)
+	end
+
+	function sphere:jumpLeft()
+		print("sphere jump left")
+		self:applyLinearImpulse(-60, 300, sphere.x, sphere.y)
+	end
+
 
 	function sphere:touch(e)
 		if e.phase == "began" then
