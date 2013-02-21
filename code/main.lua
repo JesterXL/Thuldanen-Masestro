@@ -121,7 +121,7 @@ local function testSphereRoll()
 	--]]
 
 	--local sphere = getMetalSphere(30)
-	require "player.Sphere"
+	
 	local sphere = Sphere:new()
 	sphere.x = 200
 	sphere.y = 400
@@ -698,18 +698,67 @@ local function testPistonBox()
 end
 
 local function testPlayer()
-	testLevel1Floors()
+	--testLevel1Floors()
 	require "player.Player"
 	local player = Player:new()
-	player:translate(100, 100)
+	player:translate(100, 400)
 
 	require "gui.MoveLeftButton"
 	require "gui.MoveRightButton"
+	require "gui.JumpLeftButton"
+	require "gui.JumpRightButton"
+	local jumpLeft = JumpLeftButton:new()
+	local jumpRight = JumpRightButton:new()
 	local moveLeft = MoveLeftButton:new()
 	local moveRight = MoveRightButton:new()
-	moveLeft.y = stage.height - moveLeft.height
+
+	jumpLeft.y = stage.height - jumpLeft.height
+	moveLeft.x = jumpLeft.x + jumpLeft.width + 20
+	moveLeft.y = jumpLeft.y
 	moveRight.y = moveLeft.y
 	moveRight.x = moveLeft.x + moveLeft.width + 20
+	jumpRight.y = moveRight.y
+	jumpRight.x = moveRight.x + moveRight.width + 20
+
+	--[[
+	local t = {}
+	function t:timer()
+		player:disable()
+	end
+	timer.performWithDelay(1000, t)
+
+	local cow = {}
+	function cow:timer()
+		player.x = 100
+		player.y = 400
+		player:enable()
+	end
+	timer.performWithDelay(2000, cow)
+	]]--
+end
+
+local function testPlayerControls()
+	require "gui.PlayerControls"
+	local controls = PlayerControls:new()
+	controls.fsm:changeState("out")
+
+	local t = {}
+	function t:timer()
+		controls.fsm:changeState("notes")
+	end
+	timer.performWithDelay(1000, t)
+
+	local cow = {}
+	function cow:timer()
+		controls.fsm:changeState("out")
+	end
+	timer.performWithDelay(2000, cow)
+end
+
+local function testLevelView()
+	require "gui.LevelView"
+	local levelView = LevelView:new()
+	levelView:loadLevel("levels._Level1")
 end
 
 setupGlobals()
@@ -723,10 +772,16 @@ setupPhysics()
 --testLevel1Floors()
 --testNotes()
 --testUnderscoreAll()
+
 --testSphereRollLevel1FloorsAndNotes()
-testPlayer()
+--testPlayer()
+
 --testGearJoint()
 
 --testCrystalCanisters()
 --test2Pistons()
 --testPistonBox()
+
+--testPlayerControls()
+
+testLevelView()

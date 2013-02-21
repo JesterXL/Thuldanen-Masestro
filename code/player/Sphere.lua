@@ -12,12 +12,31 @@ function Sphere:new()
 	sphere.rollSpeed = 300
 	sphere.rollDirection = "right"
 	sphere.fsm = nil
+	sphere.enabled = true
 
 	function sphere:init()
 		self.fsm = StateMachine:new(self)
 		self.fsm:addState2(SphereIdleState:new())
 		self.fsm:addState2(SphereReadyState:new())
 		self.fsm:setInitialState("ready")
+
+		self:addEventListener("touch", self)
+	end
+
+	function sphere:enable()
+		if self.enabled == false then
+			self.enabled = true
+			gameLoop:addLoop(self.fsm)
+			self.fsm:changeState("ready")
+		end
+	end
+
+	function sphere:disable()
+		if self.enabled == true then
+			self.enabled = false
+			self.fsm:changeState("idle")
+			gameLoop:removeLoop(self.fsm)
+		end
 	end
 
 	function sphere:startRollingRight()
@@ -54,21 +73,18 @@ function Sphere:new()
 		self:applyLinearImpulse(-60, 300, sphere.x, sphere.y)
 	end
 
-
-	function sphere:touch(e)
-		if e.phase == "began" then
-			--Runtime:addEventListener("enterFrame", self)
-		else
-			--Runtime:removeEventListener("enterFrame", self)
-			--sphere.angularVelocity = 0
-		end
-	end
-
 	function sphere:enterFrame(e)
 		if self.direction == "right" then
 			self:rollRight()
 		elseif self.direction == "left" then
 			self:rollLeft()
+		end
+	end
+
+	function sphere:touch(e)
+		if e.phase == "ended" then
+			self:dispatchEvent({name="onSphereTouched", target=self})
+			return true
 		end
 	end
 

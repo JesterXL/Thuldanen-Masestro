@@ -3,13 +3,14 @@ require "player.PlayerJumpLeftState"
 require "player.PlayerJumpRightState"
 require "player.PlayerMoveLeftState"
 require "player.PlayerMoveRightState"
+require "player.PlayerIdleState"
 require "player.PlayerReadyState"
 
 Player = {}
 
 function Player:new()
 	local player = display.newGroup()
-	
+	mainGroup:insert(player)
 	player.direction = "right"
 	
 	player.speed = 1
@@ -18,8 +19,8 @@ function Player:new()
 	player.moving = false
 	player.jumping = false
 
-	self.fsm = nil
-
+	player.fsm = nil
+	player.enabled = true
 
 	function player:init()
 		self.spriteHolder = display.newGroup()
@@ -40,8 +41,30 @@ function Player:new()
 		self.fsm:addState2(PlayerMoveLeftState:new())
 		self.fsm:addState2(PlayerMoveRightState:new())
 		self.fsm:addState2(PlayerReadyState:new())
+		self.fsm:addState2(PlayerIdleState:new())
 		self.fsm:setInitialState("ready")
 	end
+
+	function player:enable()
+		if self.enabled == false then
+			self.bodyType = "dynamic"
+			self.enabled = true
+			gameLoop:addLoop(self.fsm)
+			self.fsm:changeState("ready")
+		end
+	end
+
+	function player:disable()
+		if self.enabled == true then
+			self.enabled = false
+			self.fsm:changeState("idle")
+			gameLoop:removeLoop(self.fsm)
+			self.bodyType = "static"
+			self.x = -999
+			self.y = -999
+		end
+	end
+
 
 	function player:showSprite()
 		-- TODO
@@ -72,11 +95,11 @@ function Player:new()
 	end
 
 	function player:jumpRight()
-		self:applyLinearImpulse(30, 100, self.x, self.y)
+		self:applyLinearImpulse(1, 1, self.x, self.y)
 	end
 
 	function player:jumpLeft()
-		self:applyLinearImpulse(-30, 100, self.x, self.y)
+		self:applyLinearImpulse(-1, 1, self.x, self.y)
 	end
 
 	player:init()

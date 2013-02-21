@@ -13,8 +13,8 @@ function PlayerReadyState:new()
 		Runtime:addEventListener("onMovePlayerRightStarted", self)
 		Runtime:addEventListener("onMovePlayerLeftStarted", self)
 		
-		Runtime:addEventListener("onJumpPlayerRightStarted", self)
-		Runtime:addEventListener("onJumpPlayerLeftStarted", self)
+		Runtime:addEventListener("onJumpPlayerRight", self)
+		Runtime:addEventListener("onJumpPlayerLeft", self)
 		Runtime:addEventListener("onAttackStarted", self)
 	end
 	
@@ -24,8 +24,8 @@ function PlayerReadyState:new()
 		Runtime:removeEventListener("onMovePlayerRightStarted", self)
 		Runtime:removeEventListener("onMovePlayerLeftStarted", self)
 		
-		Runtime:removeEventListener("onJumpPlayerRightStarted", self)
-		Runtime:removeEventListener("onJumpPlayerLeftStarted", self)
+		Runtime:removeEventListener("onJumpPlayerRight", self)
+		Runtime:removeEventListener("onJumpPlayerLeft", self)
 		Runtime:removeEventListener("onAttackStarted", self)
 	end
 	
@@ -45,11 +45,11 @@ function PlayerReadyState:new()
 		self.stateMachine:changeStateToAtNextTick("attack")
 	end
 	
-	function state:onJumpLeftStarted(event)
+	function state:onJumpPlayerLeft(event)
 		self.stateMachine:changeStateToAtNextTick("jumpLeft")
 	end
 	
-	function state:onJumpRightStarted(event)
+	function state:onJumpPlayerRight(event)
 		self.stateMachine:changeStateToAtNextTick("jumpRight")
 	end
 	
