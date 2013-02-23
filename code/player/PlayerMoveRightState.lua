@@ -7,7 +7,6 @@ function PlayerMoveRightState:new()
 	
 	state.superOnEnterState = state.onEnterState
 	function state:onEnterState(event)
-		print("PlayerMoveRightState::onEnterState")
 		self:superOnEnterState(event)
 		self.entity:setDirection("right")
 		self.entity:showSprite("move")

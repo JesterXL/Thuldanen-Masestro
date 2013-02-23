@@ -1,30 +1,30 @@
-require "utils.BaseState"
+require "player.PlayerJumpState"
 
 PlayerJumpLeftState = {}
 
 function PlayerJumpLeftState:new()
-	local state = BaseState:new("jumpLeft")
-	state.timeout = 3 * 1000
-	state.elapsedTime = nil
+	local state = PlayerJumpState:new("jumpLeft")
 
+	state.superOnEnterState = state.onEnterState
 	function state:onEnterState(event)
 		local player = self.entity
+		self:superOnEnterState(event)
 		player:setDirection("left")
-		player:jumpLeft()
 		player:showSprite("jump")
-		self.elapsedTime = 0
+		self.xForce = -3
 	end
 	
+	state.superOnExitState = state.onExitState
 	function state:onExitState(event)
 		local player = self.entity
+		self:superOnExitState(event)
 	end
 	
+	state.superTick = state.tick
 	function state:tick(time)
-		self.elapsedTime = self.elapsedTime + time
-		if self.elapsedTime >= self.timeout then
-			local player = self.entity
-			self.stateMachine:changeStateToAtNextTick("ready")
-		end
+		local player = self.entity
+		player.x = player.x + self.xForce
+		self:superTick(time)
 	end
 	
 	return state

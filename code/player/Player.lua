@@ -5,6 +5,7 @@ require "player.PlayerMoveLeftState"
 require "player.PlayerMoveRightState"
 require "player.PlayerIdleState"
 require "player.PlayerReadyState"
+require "player.PlayerGrappleTreasureState"
 
 Player = {}
 
@@ -13,7 +14,7 @@ function Player:new()
 	mainGroup:insert(player)
 	player.direction = "right"
 	
-	player.speed = 2
+	player.speed = 4
 	player.health = 40
 
 	player.moving = false
@@ -66,15 +67,36 @@ function Player:new()
 		sprite.x = 11
 		sprite.y = 8
 
-		--local rect = display.newRect(0, 0, 10, 20)
-		--player:insert(rect)
-		--player.rect = rect
-		--rect.x = 0
-		--rect.y = 0
-
+		-- regular physics
 		physics.addBody(self, "dynamic", {density=0.3, friction=0.8, bounce=0.2, 
 											shape={0,0, 20,0, 20,40, 0,40}})
 		self.isFixedRotation = true
+
+		--[[
+		-- let's try a wheel
+		local rect = display.newRect(0, 0, 20, 40)
+		self:insert(rect)
+		rect.x = 0
+		rect.y = 0
+		physics.addBody(rect, "dynamic", {density=0.3, friction=0.8, bounce=0.2, 
+											shape={0,0, 20,0, 20,40, 0,40} })
+		rect.isFixedRotation = true
+
+		local circle = display.newCircle(0, 0, 10)
+		self:insert(circle)
+		circle.x = 0
+		circle.y = rect.y + rect.height / 2
+		physics.addBody(circle, "dynamic", {density=0.3, friction=0.8, bounce=0.2} )
+		
+
+
+		local wheelJoint = physics.newJoint("wheel", 
+														rect, circle,
+														rect.x, rect.y,
+														0, 0)
+		wheelJoint.isMotorEnabled = true
+		wheelJoint.motorSpeed = 0
+		]]--
 
 		self.fsm = StateMachine:new(self)
 		self.fsm:addState2(PlayerJumpLeftState:new())
@@ -83,6 +105,7 @@ function Player:new()
 		self.fsm:addState2(PlayerMoveRightState:new())
 		self.fsm:addState2(PlayerReadyState:new())
 		self.fsm:addState2(PlayerIdleState:new())
+		self.fsm:addState2(PlayerGrappleTreasureState:new())
 		self.fsm:setInitialState("ready")
 	end
 

@@ -842,6 +842,89 @@ local function testSphereSheet()
 	sprite:play()
 end
 
+local function testChain()
+	local grapplePoint = getGrapplePoint()
+	grapplePoint.x = 200
+	grapplePoint.y = 100
+
+	local secondPoint = getGrapplePoint()
+	secondPoint.x = 100
+	secondPoint.y = 200
+
+	local i
+	local first = true
+	local lastLink
+	local isEven = function(num)
+		if math.mod(num, 2) == 0 then
+		  return true
+		else
+		  return false
+		end
+	end
+
+	--physics.setVelocityIterations(6)
+	--physics.setDrawMode("hybrid")
+
+	for i=1,21 do
+
+		local chain
+		if isEven(i) == true then
+			chain = display.newImage("sprites/chain-link-1.png")
+			physics.addBody(chain, "dynamic", {density=1.3, friction=0.2, bounce=0.1, 
+											shape={-5,-8, 5,-8, 5,8, -5,8}})
+		else
+			chain = display.newImage("sprites/chain-link-2.png")
+			physics.addBody(chain, "dynamic", {density=1.3, friction=0.2, bounce=0.1, 
+											shape={-3,-8, 3,-8, 3,8, -3,8}})
+		end
+
+		mainGroup:insert(chain)
+		
+		local pivot
+		if first == false then
+			chain.x = lastLink.x
+			chain.y = lastLink.y + lastLink.height / 2 + 4
+			pivot = physics.newJoint("pivot", chain, lastLink, lastLink.x, lastLink.y + lastLink.height / 2)
+		else
+			first = false
+			chain.x = grapplePoint.x
+			chain.y = grapplePoint.y + grapplePoint.height / 2 + 20
+			pivot = physics.newJoint("pivot", grapplePoint, chain, chain.x, chain.y - chain.height / 2)
+		end
+		pivot.isLimitEnabled = true
+		pivot:setRotationLimits( -60, 60 )
+
+		lastLink = chain
+		lastLink.x = lastLink.x + 20
+	end
+end
+
+local function testChain2()
+	local grapplePoint = getGrapplePoint()
+	grapplePoint.x = 200
+	grapplePoint.y = 100
+
+	local secondPoint = getGrapplePoint()
+	secondPoint.x = 100
+	secondPoint.y = 200
+
+	require "sprites.Chain"
+	local chain = Chain:new(grapplePoint, secondPoint)
+end
+
+local function testVerletChain()
+	local grapplePoint = getGrapplePoint()
+	grapplePoint.x = 200
+	grapplePoint.y = 100
+
+	local secondPoint = getGrapplePoint()
+	secondPoint.x = 100
+	secondPoint.y = 200
+
+	require "sprites.VerletChain"
+	local chain = VerletChain:new(grapplePoint, secondPoint)
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -866,5 +949,8 @@ setupPhysics()
 --testPlayerControls()
 --testPlayerSheet()
 --testSphereSheet()
+--testChain()
+--testChain2()
+--testVerletChain()
 
 testLevelView()

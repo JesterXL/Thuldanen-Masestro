@@ -1,0 +1,136 @@
+Chain = {}
+
+function Chain:new(targetA, targetB)
+	local chain = {}
+	chain.targetA = targetA
+	chain.targetB = targetB
+	chain.images = {}
+	chain.joints = {}
+	chain.TIMEOUT = 500
+	chain.lastTick = 0
+
+	function chain:init()
+
+		local isEven = function(num)
+			if math.mod(num, 2) == 0 then
+			  return true
+			else
+			  return false
+			end
+		end
+
+		local targetA = self.targetA
+		local targetB = self.targetB
+		local distance = getDistance(targetA, targetB)
+		local LINK_HEIGHT = 15
+		local totalLinks = math.round(distance / LINK_HEIGHT)
+		totalLinks = math.max(4, totalLinks)
+		if isEven(totalLinks) then
+			totalLinks = totalLinks + 1
+		end
+		local i
+		local first = true
+		local lastLink
+		
+
+		--physics.setVelocityIterations(6)
+		--physics.setDrawMode("hybrid")
+
+		local images = self.images
+		local joints = self.joints
+		local chainDensity = 0.3
+		
+		for i=1,totalLinks do
+
+			-- shape={-5,-8, 5,-8, 5,8, -5,8}
+			-- shape={-3,-8, 3,-8, 3,8, -3,8}
+
+			local chain
+			if isEven(i) == true then
+				chain = display.newImage("sprites/chain-link-1.png")
+				mainGroup:insert(chain)
+				physics.addBody(chain, "dynamic", {density=chainDensity, friction=0.0, bounce=0.1, 
+												shape={-5,-8, 5,-8, 5,8, -5,8}})
+			else
+				chain = display.newImage("sprites/chain-link-2.png")
+				mainGroup:insert(chain)
+				physics.addBody(chain, "dynamic", {density=chainDensity, friction=0.0, bounce=0.1, 
+													shape={-3,-8, 3,-8, 3,8, -3,8}})
+			end
+			table.insert(images, chain)
+			local pivot, mappedX, mappedY
+			if first == false then
+				chain.x = lastLink.x
+				chain.y = lastLink.y - lastLink.height / 2 + 4
+				pivot = physics.newJoint("pivot", chain, lastLink, lastLink.x, lastLink.y + lastLink.height / 2)
+				--mappedX, mappedY = sphere:contentToLocal(sphere.x + 2, sphere.y - sphere.height / 2)
+				--pivot = physics.newJoint("distance", chain, lastLink, lastLink.x, lastLink.y - lastLink.height / 2, chain.x, chain.y + chain.height / 2)
+
+			else
+				first = false
+				chain.x = targetA.x
+				chain.y = targetA.y - targetA.height / 2 + 20
+				pivot = physics.newJoint("pivot", targetA, chain, chain.x, chain.y - chain.height / 2)
+				--pivot = physics.newJoint("distance", targetA, chain, targetA.x, targetA.y + targetA.height /2, chain.x, chain.y - chain.height / 2)
+			end
+			--pivot.isLimitEnabled = true
+			--pivot:setRotationLimits(-60, 60)
+			pivot.maxLength = 10
+			table.insert(joints, pivot)
+			lastLink = chain
+			lastLink.x = lastLink.x - 20
+
+			if i == totalLinks then
+				chain.x = targetB.x
+				chain.y = targetB.y - targetB.height / 2 - 4
+				local finalPivot = physics.newJoint("pivot", chain, targetB, targetB.x, targetB.y + targetB.height / 2)
+				--finalPivot.isLimitEnabled = true
+				--finalPivot:setRotationLimits(-60, 60)
+				table.insert(joints, finalPivot)
+			end
+		end
+
+		--gameLoop:addLoop(self)
+	end
+
+	function chain:destroy()
+		local joints = self.joints
+		local len = table.maxn(joints)
+		local i
+		for i=1,len do
+			local joint = joints[i]
+			joint:removeSelf()
+		end
+		self.joints = {}
+
+		local images = self.images
+		len = table.maxn(images)
+		for i=1,len do
+			local image = images[i]
+			image:removeSelf()
+		end
+		self.images = {}
+
+		--gameLoop:removeLoop(self)
+	end
+
+	function chain:tick(time)
+		self.lastTick = self.lastTick + time
+		if self.lastTick > self.TIMEOUT then
+			local i
+			local images = self.images
+			local len = #images
+			for i=1,len do
+				local image = images[i]
+				image:applyForce(0, 0.05, 0, image.y + image.height / 2)
+			end
+			self.lastTick = 0
+		end
+	end
+
+	chain:init(targetA, targetB)
+
+	return chain
+end
+
+return Chain

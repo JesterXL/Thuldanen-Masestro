@@ -1,12 +1,15 @@
 require "utils.BaseState"
-PlayerReadyState = {}
+PlayerGrappleTreasureState = {}
 
-function PlayerReadyState:new()
-	local state = BaseState:new("ready")
+function PlayerGrappleTreasureState:new()
+	local state = BaseState:new("grappleTreasure")
+	state.startTime = nil
+	state.END_TIME = 1 * 1000
 	
 	function state:onEnterState(event)
-		print("ready state")
+		print("grapple treasure state")
 		local player = self.entity
+		self.startTime = 0
 		
 		player:showSprite("stand")
 		
@@ -16,8 +19,6 @@ function PlayerReadyState:new()
 		Runtime:addEventListener("onJumpPlayerRight", self)
 		Runtime:addEventListener("onJumpPlayerLeft", self)
 		Runtime:addEventListener("onAttackStarted", self)
-
-		Runtime:addEventListener("onPlayerGrappleTreasure", self)
 	end
 	
 	function state:onExitState(event)
@@ -29,12 +30,15 @@ function PlayerReadyState:new()
 		Runtime:removeEventListener("onJumpPlayerRight", self)
 		Runtime:removeEventListener("onJumpPlayerLeft", self)
 		Runtime:removeEventListener("onAttackStarted", self)
-
-		Runtime:removeEventListener("onPlayerGrappleTreasure", self)
 	end
 	
 	function state:tick(time)
-		local player = self.entity
+		self.startTime = self.startTime + time
+		if self.startTime >= self.END_TIME then
+			self.startTime = 0
+			Runtime:dispatchEvent({name="onPlayerGrappledTreasureSuccessfully", target=self, player=self.entity})
+			self.stateMachine:changeStateToAtNextTick("ready")
+		end
 	end
 	
 	function state:onMovePlayerLeftStarted(event)
@@ -57,11 +61,8 @@ function PlayerReadyState:new()
 		self.stateMachine:changeStateToAtNextTick("jumpRight")
 	end
 
-	function state:onPlayerGrappleTreasure()
-		self.stateMachine:changeStateToAtNextTick("grappleTreasure")
-	end
 	
 	return state
 end
 
-return PlayerReadyState
+return PlayerGrappleTreasureState
