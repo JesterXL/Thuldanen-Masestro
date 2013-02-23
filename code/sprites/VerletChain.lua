@@ -6,6 +6,7 @@ function VerletChain:new(targetA, targetB)
 	mainGroup:insert(chain)
 	chain.targetA = targetA
 	chain.targetB = targetB
+	chain.linkImages = {}
 
 	function chain:init()
 
@@ -104,6 +105,18 @@ function VerletChain:new(targetA, targetB)
 			i = i + 1
 		end
 
+		--for i=1,#sticks do
+			--local chain
+			--if isEven(i) == false then
+			--	chain = display.newImage("sprites/chain-link-1.png")
+			--else
+			--	chain = display.newImage("sprites/chain-link-2.png")
+			--end
+			--chain:setReferencePoint(display.TopCenterReferencePoint)
+			--table.insert(self.linkImages, chain)
+			--self:insert(chain)
+		--end
+
 		local gravity = 2
 		local onFrame = function()
 			--local pointAX, pointAY = targetA:contentToLocal(targetA.x, targetA.y)
@@ -133,11 +146,20 @@ function VerletChain:new(targetA, targetB)
 
 			clearLines()
 			i = 1
+			--local links = self.linkImages
 			while i < t do
 				local stick = sticks[i]
-				local line = display.newLine(lines, stick.pointA.x, stick.pointA.y, stick.pointB.x, stick.pointB.y)
-				line.width = 3
-				line:setColor(255, 0, 0)
+				--local link = links[i]
+				--local deltaY = stick.pointB.y - stick.pointA.y
+				--local deltaX = stick.pointB.x - stick.pointB.y
+				--local angleDegrees = math.deg(math.atan2(deltaY, deltaX)) - 90
+				--print(angleDegrees)
+				--local line = display.newLine(lines, stick.pointA.x, stick.pointA.y, stick.pointB.x, stick.pointB.y)
+				--line.width = 3
+				--line:setColor(255, 0, 0)
+				link.x = stick.pointA.x
+				link.y = stick.pointA.y
+				link.rotation = angleDegrees
 				i = i + 1
 			end
 

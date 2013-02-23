@@ -11,20 +11,14 @@ function Chain:new(targetA, targetB)
 
 	function chain:init()
 
-		local isEven = function(num)
-			if math.mod(num, 2) == 0 then
-			  return true
-			else
-			  return false
-			end
-		end
+		
 
 		local targetA = self.targetA
 		local targetB = self.targetB
 		local distance = getDistance(targetA, targetB)
 		local LINK_HEIGHT = 15
 		local totalLinks = math.round(distance / LINK_HEIGHT)
-		totalLinks = math.max(4, totalLinks)
+		totalLinks = math.max(13, totalLinks)
 		if isEven(totalLinks) then
 			totalLinks = totalLinks + 1
 		end
@@ -38,7 +32,7 @@ function Chain:new(targetA, targetB)
 
 		local images = self.images
 		local joints = self.joints
-		local chainDensity = 0.3
+		local chainDensity = 0.01
 		
 		for i=1,totalLinks do
 
@@ -50,42 +44,46 @@ function Chain:new(targetA, targetB)
 				chain = display.newImage("sprites/chain-link-1.png")
 				mainGroup:insert(chain)
 				physics.addBody(chain, "dynamic", {density=chainDensity, friction=0.0, bounce=0.1, 
+												isSensor=true,
 												shape={-5,-8, 5,-8, 5,8, -5,8}})
 			else
 				chain = display.newImage("sprites/chain-link-2.png")
 				mainGroup:insert(chain)
 				physics.addBody(chain, "dynamic", {density=chainDensity, friction=0.0, bounce=0.1, 
+													isSensor=true,
 													shape={-3,-8, 3,-8, 3,8, -3,8}})
 			end
 			table.insert(images, chain)
 			local pivot, mappedX, mappedY
 			if first == false then
 				chain.x = lastLink.x
-				chain.y = lastLink.y - lastLink.height / 2 + 4
-				pivot = physics.newJoint("pivot", chain, lastLink, lastLink.x, lastLink.y + lastLink.height / 2)
+				chain.y = lastLink.y - lastLink.height + 4
+				pivot = physics.newJoint("pivot", chain, lastLink, lastLink.x, lastLink.y - lastLink.height / 2)
 				--mappedX, mappedY = sphere:contentToLocal(sphere.x + 2, sphere.y - sphere.height / 2)
 				--pivot = physics.newJoint("distance", chain, lastLink, lastLink.x, lastLink.y - lastLink.height / 2, chain.x, chain.y + chain.height / 2)
-
+				pivot.isLimitEnabled = true
+			pivot:setRotationLimits(-60, 60)
 			else
 				first = false
 				chain.x = targetA.x
-				chain.y = targetA.y - targetA.height / 2 + 20
-				pivot = physics.newJoint("pivot", targetA, chain, chain.x, chain.y - chain.height / 2)
+				chain.y = targetA.y
+				pivot = physics.newJoint("pivot", chain, targetA, chain.x, chain.y + chain.height / 2)
 				--pivot = physics.newJoint("distance", targetA, chain, targetA.x, targetA.y + targetA.height /2, chain.x, chain.y - chain.height / 2)
+				--pivot.isLimitEnabled = true
+				--pivot:setRotationLimits(-60, 60)
 			end
-			--pivot.isLimitEnabled = true
-			--pivot:setRotationLimits(-60, 60)
-			pivot.maxLength = 10
+			
+			--pivot.maxLength = 10
 			table.insert(joints, pivot)
 			lastLink = chain
 			lastLink.x = lastLink.x - 20
 
 			if i == totalLinks then
 				chain.x = targetB.x
-				chain.y = targetB.y - targetB.height / 2 - 4
-				local finalPivot = physics.newJoint("pivot", chain, targetB, targetB.x, targetB.y + targetB.height / 2)
-				--finalPivot.isLimitEnabled = true
-				--finalPivot:setRotationLimits(-60, 60)
+				chain.y = targetB.y
+				local finalPivot = physics.newJoint("pivot", chain, targetB, targetB.x, targetB.y)
+				finalPivot.isLimitEnabled = true
+				finalPivot:setRotationLimits(-60, 60)
 				table.insert(joints, finalPivot)
 			end
 		end

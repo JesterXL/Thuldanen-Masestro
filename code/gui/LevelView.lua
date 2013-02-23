@@ -126,8 +126,9 @@ function LevelView:new()
 		local treasureBox = self.lastGrappledTreasureBox
 		assert(player ~= nil, "player must not be nil.")
 		assert(treasureBox ~= nil, "treasureBox must not be nil.")
-		--local chain = Chain:new(player, treasureBox)
-		local chain = VerletChain:new(player, treasureBox)
+		--treasureBox.isSensor = true
+		local chain = Chain:new(player, treasureBox)
+		--local chain = VerletChain:new(player, treasureBox)
 
 		treasureBox:activateLevitation(player)
 

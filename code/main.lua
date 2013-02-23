@@ -28,8 +28,8 @@ local function setupGlobals()
 end
 
 local function setupPhysics()
-	physics.setDrawMode("hybrid")
-	--physics.setDrawMode("normal")
+	--physics.setDrawMode("hybrid")
+	physics.setDrawMode("normal")
 	physics.start()
 	physics.setGravity(0, 9.8)
 	physics.setPositionIterations( 10 )
@@ -120,6 +120,14 @@ function getDistance(objA, objB)
 	local deltaY = objB.y - objA.y
 	local dist = math.sqrt((deltaX * deltaX) + (deltaY * deltaY))
 	return dist
+end
+
+function isEven(num)
+	if math.mod(num, 2) == 0 then
+	  return true
+	else
+	  return false
+	end
 end
 
 local function testSphereRoll()
