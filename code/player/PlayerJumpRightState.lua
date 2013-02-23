@@ -11,6 +11,7 @@ function PlayerJumpRightState:new()
 		local player = self.entity
 		player:setDirection("right")
 		player:jumpRight()
+		player:showSprite("jump")
 		self.elapsedTime = 0
 	end
 	

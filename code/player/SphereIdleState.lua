@@ -7,10 +7,12 @@ function SphereIdleState:new()
 	function state:onEnterState(event)
 		print("Sphere idle state")
 		local sphere = self.entity
+		sphere:showSprite("doorOpen")
 	end
 	
 	function state:onExitState(event)
 		local sphere = self.entity
+		sphere:showSprite("doorClose")
 	end
 
 	return state

@@ -5,11 +5,33 @@ require "player.SphereReadyState"
 Sphere = {}
 
 function Sphere:new()
-	local sphere = display.newCircle(0, 0, 30)
+	--local sphere = display.newCircle(0, 0, 30)
+	local sheet = graphics.newImageSheet("player/Sphere-sheet.png", {width=224, height=224, numFrames=4})
+	local sequenceData = 
+	{
+		{
+			name="doorOpen",
+			start=1,
+			count=4,
+			time=700,
+			loopCount=1
+		},
+		{
+			name="doorClose",
+			frames={4,3,2,1},
+			time=700,
+			loopCount=1
+		},
+	}
+
+	local sphere = display.newSprite(sheet, sequenceData)
+	sphere:pause()
+	sphere:setFrame(1)
+
 	mainGroup:insert(sphere)
-	physics.addBody(sphere, "dynamic", {density=3, radius=30, bounce=0.2, friction=0.9})
+	physics.addBody(sphere, "dynamic", {density=3, radius=102, bounce=0.2, friction=0.9})
 	sphere.angularDamping = 5
-	sphere.rollSpeed = 300
+	sphere.rollSpeed = 10000
 	sphere.rollDirection = "right"
 	sphere.fsm = nil
 	sphere.enabled = true
@@ -37,6 +59,11 @@ function Sphere:new()
 			self.fsm:changeState("idle")
 			gameLoop:removeLoop(self.fsm)
 		end
+	end
+
+	function sphere:showSprite(name)
+		self:setSequence(name)
+		self:play()
 	end
 
 	function sphere:startRollingRight()

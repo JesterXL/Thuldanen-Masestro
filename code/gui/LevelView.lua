@@ -94,7 +94,7 @@ function LevelView:new()
 	function level:onPlayerEnterExitSphere()
 		if self.player.enabled == true then
 			local dist = getDistance(self.player, self.sphere)
-			if dist <= 43 then
+			if dist <= 143 then
 				self.player:disable()
 				self.sphere:enable()
 				self.playerControls.fsm:changeState("notes")

@@ -1,7 +1,17 @@
 
 require "physics"
 
+--[[
 
+	1 meter = 30 pixels
+	1.4 meters = 42
+	x meters = 64
+	3 meters = 90 pixels
+	1 meter = 3.3 feet
+	3 meters = 9.8 feet
+
+	sphere 209 pixels = x meters
+]]--
 
 display.setStatusBar( display.HiddenStatusBar )
 
@@ -23,6 +33,7 @@ local function setupPhysics()
 	physics.start()
 	physics.setGravity(0, 9.8)
 	physics.setPositionIterations( 10 )
+
 end
 
 local function drawStageBorders()
@@ -756,9 +767,79 @@ local function testPlayerControls()
 end
 
 local function testLevelView()
+	local bg = display.newRect(0, 0, stage.width, stage.height)
+	bg:setFillColor(200, 200, 200)
+	mainGroup:insert(bg)
+
 	require "gui.LevelView"
 	local levelView = LevelView:new()
 	levelView:loadLevel("levels._Level1")
+end
+
+local function testPlayerSheet()
+	local bg = display.newRect(0, 0, stage.width, stage.height)
+	bg:setFillColor(255, 255, 255)
+
+	local sheet = graphics.newImageSheet("player/Player-sheet.png", {width=64, height=64, numFrames=18})
+	local sequenceData = 
+	{
+		{
+			name="stand",
+			start=1,
+			count=3,
+			time=1000,
+			loopDirection="bounce"
+		},
+		{
+			name="walk",
+			frames={1, 4, 5},
+			time=1000,
+		},
+		{
+			name="defend",
+			start=7,
+			count=1,
+			time=5000,
+		},
+		{
+			name="attack",
+			frames={8, 9, 10, 11, 12, 13, 14},
+			time=500
+		}
+	}
+
+	local sprite = display.newSprite(sheet, sequenceData)
+	sprite.x = 200
+	sprite.y = 200
+	sprite:setSequence("attack")
+	sprite:play()
+end
+
+local function testSphereSheet()
+	local bg = display.newRect(0, 0, stage.width, stage.height)
+	bg:setFillColor(255, 255, 255)
+
+	local sheet = graphics.newImageSheet("player/Sphere-sheet.png", {width=224, height=224, numFrames=4})
+	local sequenceData = 
+	{
+		{
+			name="doorOpen",
+			start=1,
+			count=4,
+			time=700,
+		},
+		{
+			name="doorClose",
+			frames={4,3,2,1},
+			time=700,
+		},
+	}
+
+	local sprite = display.newSprite(sheet, sequenceData)
+	sprite.x = 500
+	sprite.y = 300
+	sprite:setSequence("doorClose")
+	sprite:play()
 end
 
 setupGlobals()
@@ -783,5 +864,7 @@ setupPhysics()
 --testPistonBox()
 
 --testPlayerControls()
+--testPlayerSheet()
+--testSphereSheet()
 
 testLevelView()
