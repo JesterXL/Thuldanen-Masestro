@@ -6,6 +6,7 @@ require "player.PlayerMoveRightState"
 require "player.PlayerIdleState"
 require "player.PlayerReadyState"
 require "player.PlayerGrappleTreasureState"
+require "gui.ProgressBar"
 
 Player = {}
 
@@ -24,6 +25,7 @@ function Player:new()
 
 	player.fsm = nil
 	player.enabled = true
+	player.grappleProgressBar = nil
 
 	function player:init()
 		self.spriteHolder = display.newGroup()
@@ -162,12 +164,25 @@ function Player:new()
 		self.moving = false
 	end
 
-	function player:jumpRight()
-		self:applyLinearImpulse(self.jumpXForce, self.jumpYForce, self.x, self.y)
+	function player:showGrappleProgress(current, total)
+		local bar
+		if self.grappleProgressBar then
+			bar = self.grappleProgressBar
+			bar.isVisible = true
+		else
+			bar = ProgressBar:new(255, 255, 255, 0, 242, 0, 30, 10)
+			local theX, theY = mainGroup:localToContent(self.x, self.y)
+			bar.x = theX
+			bar.y = theY - 20
+			self.grappleProgressBar = bar
+		end
+		bar:setProgress(current, total)
 	end
 
-	function player:jumpLeft()
-		self:applyLinearImpulse(-self.jumpXForce, self.jumpYForce, self.x, self.y)
+	function player:hideGrappleProgress()
+		if self.grappleProgressBar then
+			self.grappleProgressBar.isVisible = false
+		end
 	end
 
 	player:init()

@@ -16,8 +16,13 @@ function Treasure:new()
 
 	function box:touch(event)
 		if event.phase == "ended" then
-			Runtime:dispatchEvent({name="onPlayerGrappleTreasure", target=self})
-			return true
+			if self.bodyType == "dynamic" then
+				Runtime:dispatchEvent({name="onPlayerGrappleTreasure", target=self})
+				return true
+			else
+				Runtime:dispatchEvent({name="onPlayerUnGrappleTreasure", target=self})
+				return true
+			end
 		end
 	end
 

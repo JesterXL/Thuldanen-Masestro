@@ -933,6 +933,19 @@ local function testVerletChain()
 	local chain = VerletChain:new(grapplePoint, secondPoint)
 end
 
+local function testProgressBar()
+	backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
+	backgroundRect:setFillColor(255, 255, 255)
+
+	require "gui.ProgressBar"
+	local bar = ProgressBar:new(255, 255, 255, 0, 242, 0, 30, 10)
+	bar.x = 30
+	bar.y = 30
+	bar:setProgress(5, 10)
+	--bar:showProgressAdjusted(5, 4, 10)
+	--bar:showProgressAdjusted(5, 7, 10)
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -960,5 +973,6 @@ setupPhysics()
 --testChain()
 --testChain2()
 --testVerletChain()
+--testProgressBar()
 
 testLevelView()

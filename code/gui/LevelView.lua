@@ -16,7 +16,7 @@ function LevelView:new()
 	level.currentLevel = nil
 	-- TODO: this could be a memory leak if the level is destroyed and this box hangs around
 	level.lastGrappledTreasureBox = nil
-	level.chains = {}
+	level.lastGrappleChain = nil
 
 	function level:init()
 		self.sphere = Sphere:new()
@@ -38,6 +38,7 @@ function LevelView:new()
 		Runtime:addEventListener("onPlayerEnterExitSphere", self)
 		Runtime:addEventListener("onPlayerGrappleTreasure", self)
 		Runtime:addEventListener("onPlayerGrappledTreasureSuccessfully", self)
+		Runtime:addEventListener("onPlayerUnGrappleTreasure", self)
 	end
 
 	function level:loadLevel(levelRequirePath)
@@ -121,69 +122,20 @@ function LevelView:new()
 		self.lastGrappledTreasureBox = event.target
 	end
 
+	function level:onPlayerUnGrappleTreasure(event)
+		self.lastGrappledTreasureBox:deactivateLevitation()
+		self.lastGrappledTreasureBox = nil
+		self.lastGrappleChain:destroy()
+		self.lastGrappleChain = nil
+	end
+
 	function level:onPlayerGrappledTreasureSuccessfully(event)
 		local player = event.player
 		local treasureBox = self.lastGrappledTreasureBox
 		assert(player ~= nil, "player must not be nil.")
 		assert(treasureBox ~= nil, "treasureBox must not be nil.")
-		--treasureBox.isSensor = true
-		local chain = Chain:new(player, treasureBox)
-		--local chain = VerletChain:new(player, treasureBox)
-
+		self.lastGrappleChain = Chain:new(player, treasureBox)
 		treasureBox:activateLevitation(player)
-
-		--[[
-		print("------")
-		local mappedX, mappedY = mainGroup:localToContent(player.x, player.y - player.height / 2)
-		print(mappedX, mappedY)
-		--mappedX, mappedY = mainGroup:contentToLocal(mappedX, mappedY)
-		mappedX = mappedX + mainGroup.x
-		print(mappedX, mappedY)
-		print(player.x, player.y)
-		print(treasureBox.x, treasureBox.y)
-		local boxX, boxY = mainGroup:localToContent(treasureBox.x, treasureBox.y)
-		boxX = boxX + mainGroup.x
-		print(boxX, boxY)
-		local rope = physics.newJoint("rope", treasureBox, player, boxX, boxY)
-		
-		--local rope = physics.newJoint("distance", player, treasureBox, player.x, player.y, treasureBox.x, treasureBox.y + treasureBox.height / 2)
-		print("before:", rope.maxLength)
-		rope.maxLength = 10
-		print("after:", rope.maxLength)
-		--rope.length = 50
-		
-		--rope = physics.newJoint("distance", player, treasureBox, player.x, player.y, treasureBox.x, treasureBox.y + treasureBox.height / 2)
-		
-		--treasureBox.bodyType = "kinematic"
-		local mappedX, mappedY = mainGroup:localToContent(treasureBox.x, treasureBox.y)
-		--mappedX = mappedX - mainGroup.x
-		--local touchJoint = physics.newJoint( "touch", treasureBox, mappedX, mappedY)
-		--mainGroup:insert(touchJoint)
-		--touchJoint.frequency = 0.5
-		---touchJoint.dampingRatio = 1
-		--touchJoint.maxForce = 100
-
-		local mappedX2, mappedY2 = mainGroup:localToContent(player.x, player.y)
-
-		local distanceJoint = physics.newJoint("distance", player, treasureBox, mappedX2, mappedY2, mappedX, mappedY)
-		distanceJoint.length = 40
-
-		local t = {}
-		t.x = treasureBox.x
-		t.y = treasureBox.y
-		function t:timer(time)
-			local mappedX, mappedY = mainGroup:localToContent(player.x + player.width / 2, player.y)
-			--print("------")
-			--print("player:", player.x, player.y)
-			--print("mapped:", mappedX, mappedY)
-			--mappedX = mappedX + mainGroup.x
-			touchJoint:setTarget( mappedX, mappedY )
-			--print("a:", touchJoint:getAnchorA(), touchJoint:getAnchorB())
-			print(touchJoint.anchorA)
-		end
-		--gameLoop:addLoop(t)
-		--timer.performWithDelay(300, t, 0)
-		]]--
 	end
 
 	level:init()

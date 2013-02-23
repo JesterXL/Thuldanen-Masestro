@@ -10,9 +10,6 @@ function Chain:new(targetA, targetB)
 	chain.lastTick = 0
 
 	function chain:init()
-
-		
-
 		local targetA = self.targetA
 		local targetB = self.targetB
 		local distance = getDistance(targetA, targetB)
@@ -25,20 +22,12 @@ function Chain:new(targetA, targetB)
 		local i
 		local first = true
 		local lastLink
-		
-
-		--physics.setVelocityIterations(6)
-		--physics.setDrawMode("hybrid")
 
 		local images = self.images
 		local joints = self.joints
 		local chainDensity = 0.01
 		
 		for i=1,totalLinks do
-
-			-- shape={-5,-8, 5,-8, 5,8, -5,8}
-			-- shape={-3,-8, 3,-8, 3,8, -3,8}
-
 			local chain
 			if isEven(i) == true then
 				chain = display.newImage("sprites/chain-link-1.png")
@@ -59,8 +48,6 @@ function Chain:new(targetA, targetB)
 				chain.x = lastLink.x
 				chain.y = lastLink.y - lastLink.height + 4
 				pivot = physics.newJoint("pivot", chain, lastLink, lastLink.x, lastLink.y - lastLink.height / 2)
-				--mappedX, mappedY = sphere:contentToLocal(sphere.x + 2, sphere.y - sphere.height / 2)
-				--pivot = physics.newJoint("distance", chain, lastLink, lastLink.x, lastLink.y - lastLink.height / 2, chain.x, chain.y + chain.height / 2)
 				pivot.isLimitEnabled = true
 			pivot:setRotationLimits(-60, 60)
 			else
@@ -68,12 +55,8 @@ function Chain:new(targetA, targetB)
 				chain.x = targetA.x
 				chain.y = targetA.y
 				pivot = physics.newJoint("pivot", chain, targetA, chain.x, chain.y + chain.height / 2)
-				--pivot = physics.newJoint("distance", targetA, chain, targetA.x, targetA.y + targetA.height /2, chain.x, chain.y - chain.height / 2)
-				--pivot.isLimitEnabled = true
-				--pivot:setRotationLimits(-60, 60)
 			end
 			
-			--pivot.maxLength = 10
 			table.insert(joints, pivot)
 			lastLink = chain
 			lastLink.x = lastLink.x - 20
@@ -87,8 +70,6 @@ function Chain:new(targetA, targetB)
 				table.insert(joints, finalPivot)
 			end
 		end
-
-		--gameLoop:addLoop(self)
 	end
 
 	function chain:destroy()
@@ -108,22 +89,6 @@ function Chain:new(targetA, targetB)
 			image:removeSelf()
 		end
 		self.images = {}
-
-		--gameLoop:removeLoop(self)
-	end
-
-	function chain:tick(time)
-		self.lastTick = self.lastTick + time
-		if self.lastTick > self.TIMEOUT then
-			local i
-			local images = self.images
-			local len = #images
-			for i=1,len do
-				local image = images[i]
-				image:applyForce(0, 0.05, 0, image.y + image.height / 2)
-			end
-			self.lastTick = 0
-		end
 	end
 
 	chain:init(targetA, targetB)

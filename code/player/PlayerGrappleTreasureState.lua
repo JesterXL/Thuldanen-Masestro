@@ -23,6 +23,7 @@ function PlayerGrappleTreasureState:new()
 	
 	function state:onExitState(event)
 		local player = self.entity
+		player:hideGrappleProgress()
 		
 		Runtime:removeEventListener("onMovePlayerRightStarted", self)
 		Runtime:removeEventListener("onMovePlayerLeftStarted", self)
@@ -34,6 +35,8 @@ function PlayerGrappleTreasureState:new()
 	
 	function state:tick(time)
 		self.startTime = self.startTime + time
+		local p = math.floor((self.startTime / self.END_TIME) * 100)
+		self.entity:showGrappleProgress(p, 100)
 		if self.startTime >= self.END_TIME then
 			self.startTime = 0
 			Runtime:dispatchEvent({name="onPlayerGrappledTreasureSuccessfully", target=self, player=self.entity})
