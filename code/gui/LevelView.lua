@@ -63,33 +63,16 @@ function LevelView:new()
 	end
 
 	function level:scrollScreen()
-		local w = mainGroup.width
-		local centerX = w / 4
-		local centerY = mainGroup.y
-		local sphere
-		if self.sphere.enabled == true then
-			sphere = self.sphere
+		local w = stage.width
+		local w2 = w / 2
+		local player
+		if self.player.enabled == true then
+			player = self.player
 		else
-			sphere = self.player
+			player = self.sphere
 		end
-		local playerX, playerY = sphere:localToContent(0, 0)
-		local currentOffsetX = playerX - mainGroup.x
-		local currentOffsetY = playerY - mainGroup.y
-		local deltaX = playerX - centerX
-		--local deltaY = playerY - centerY
-		local deltaY = (-sphere.y) - mainGroup.y
-		local dist = math.sqrt((deltaX * deltaX) + (deltaY * deltaY))
-		local speed = 0.15
-		local passed = system.getTimer() - self.lastScrollTime
-		self.lastScrollTime = system.getTimer()
-		local moveX = speed * (deltaX / dist) * passed
-		local moveY = speed * (deltaY / dist) * passed
-		
-		moveX = math.round(moveX)
-		moveY = math.round(moveY)
+		mainGroup.x = w2 - player.x
 
-		mainGroup.x = mainGroup.x - deltaX
-		--mainGroup.y = -(sphere.y - 160)
 	end	
 	
 	function level:startScrollScreen()

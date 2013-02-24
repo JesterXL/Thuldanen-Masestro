@@ -8,6 +8,7 @@ function SphereIdleState:new()
 		print("Sphere idle state")
 		local sphere = self.entity
 		sphere:showSprite("doorOpen")
+		sphere:stopRolling()
 	end
 	
 	function state:onExitState(event)

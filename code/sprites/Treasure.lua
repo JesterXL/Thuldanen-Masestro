@@ -65,9 +65,9 @@ function Treasure:new()
 		--	floatSpeed = -14
 		--end
 		if math.abs(deltaY) < 60 then
-			self.y = self.y - 0.5
+			deltaY = deltaY - 0.5
 		elseif math.abs(deltaY) > 190 then
-			self.y = self.y + 0.5
+			deltaY = deltaY + 0.5
 		end
 
 		if math.abs(deltaX) > 190 then
@@ -95,8 +95,8 @@ function Treasure:new()
 
 		else
 			self.x = self.x - moveX
-			--self.y = self.y - moveY
-			--self:applyForce(-(self.x - moveX), 0, self.x, self.y)
+			self.y = self.y - moveY
+			--self:applyForce(0, 14, self.x, self.y)
 		end
 
 
