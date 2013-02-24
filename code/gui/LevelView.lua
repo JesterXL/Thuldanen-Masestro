@@ -17,6 +17,7 @@ function LevelView:new()
 	-- TODO: this could be a memory leak if the level is destroyed and this box hangs around
 	level.lastGrappledTreasureBox = nil
 	level.lastGrappleChain = nil
+	level.sphereCollisionDelegate = nil
 
 	function level:init()
 		self.sphere = Sphere:new()
@@ -103,14 +104,20 @@ function LevelView:new()
 		if self.player.enabled == true then
 			local dist = getDistance(self.player, self.sphere)
 			if dist <= 143 then
-				self.player:disable()
-				self.sphere:enable()
-				self.playerControls.fsm:changeState("notes")
+				self:playerEnterSphere()
 			end
 		end
 	end
 
 	function level:onSphereTouched()
+		if self.sphere.enabled then
+			self:playerExitSphere()
+		else
+			self:onPlayerEnterExitSphere()
+		end
+	end
+
+	function level:playerExitSphere()
 		self.sphere:disable()
 		self.player:enable()
 		self.player.x = self.sphere.x
@@ -118,15 +125,26 @@ function LevelView:new()
 		self.playerControls.fsm:changeState("out")
 	end
 
+	function level:playerEnterSphere()
+		self:onCapturedTreasureBox()
+		self.player:disable()
+		self.sphere:enable()
+		self.playerControls.fsm:changeState("notes")
+	end
+
 	function level:onPlayerGrappleTreasure(event)
 		self.lastGrappledTreasureBox = event.target
 	end
 
-	function level:onPlayerUnGrappleTreasure(event)
+	function level:onPlayerUnGrappleTreasure()
 		self.lastGrappledTreasureBox:deactivateLevitation()
 		self.lastGrappledTreasureBox = nil
 		self.lastGrappleChain:destroy()
 		self.lastGrappleChain = nil
+		if self.sphereCollisionDelegate then
+			self.sphere:removeEventListener("collision", self.sphereCollisionDelegate)
+			self.sphereCollisionDelegate = nil
+		end
 	end
 
 	function level:onPlayerGrappledTreasureSuccessfully(event)
@@ -136,6 +154,23 @@ function LevelView:new()
 		assert(treasureBox ~= nil, "treasureBox must not be nil.")
 		self.lastGrappleChain = Chain:new(player, treasureBox)
 		treasureBox:activateLevitation(player)
+		local sphereCollisionDelegate = {}
+		function sphereCollisionDelegate:collision(event)
+			if event.other.classType == "Player" then
+				level:onCapturedTreasureBox()
+				return true
+			end
+		end
+		self.sphereCollisionDelegate = sphereCollisionDelegate
+		self.sphere:addEventListener("collision", sphereCollisionDelegate)
+	end
+
+	function level:onCapturedTreasureBox()
+		local box = self.lastGrappledTreasureBox
+		if box then
+			self:onPlayerUnGrappleTreasure()
+			box:onCaptured()
+		end
 	end
 
 	level:init()

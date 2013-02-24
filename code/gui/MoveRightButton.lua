@@ -8,7 +8,7 @@ function MoveRightButton:new()
 		if p == "began" then
 			Runtime:dispatchEvent({name = "onMovePlayerRightStarted", target = event.target})
 			return true
-		elseif p == "ended" or p == "cancelled" then
+		else
 			Runtime:dispatchEvent({name = "onMovePlayerRightEnded", target = event.target})
 			return true
 		end

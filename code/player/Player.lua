@@ -6,26 +6,32 @@ require "player.PlayerMoveRightState"
 require "player.PlayerIdleState"
 require "player.PlayerReadyState"
 require "player.PlayerGrappleTreasureState"
+require "player.PlayerClimbLadderState"
 require "gui.ProgressBar"
 
 Player = {}
 
 function Player:new()
 	local player = display.newGroup()
+	player.classType = "Player"
 	mainGroup:insert(player)
 	player.direction = "right"
 	
 	player.speed = 4
+	player.climbSpeed = 0.1
 	player.health = 40
 
 	player.moving = false
 	player.jumping = false
+	player.climbing = false
+	player.climbDirection = nil
 	player.jumpXForce = 4
 	player.jumpYForce = 6
 
 	player.fsm = nil
 	player.enabled = true
 	player.grappleProgressBar = nil
+	player.lastLadder = nil
 
 	function player:init()
 		self.spriteHolder = display.newGroup()
@@ -108,6 +114,7 @@ function Player:new()
 		self.fsm:addState2(PlayerReadyState:new())
 		self.fsm:addState2(PlayerIdleState:new())
 		self.fsm:addState2(PlayerGrappleTreasureState:new())
+		self.fsm:addState2(PlayerClimbLadderState:new())
 		self.fsm:setInitialState("ready")
 	end
 
@@ -117,17 +124,23 @@ function Player:new()
 			self.enabled = true
 			gameLoop:addLoop(self.fsm)
 			self.fsm:changeState("ready")
+			Runtime:addEventListener("onPlayerLadderCollisionBegan", self)
+			Runtime:addEventListener("onPlayerLadderCollisionEnded", self)
+			--self:addEventListener("postCollision", self)
 		end
 	end
 
 	function player:disable()
 		if self.enabled == true then
 			self.enabled = false
+			--self:removeEventListener("postCollision", self)
 			self.fsm:changeState("idle")
 			gameLoop:removeLoop(self.fsm)
 			self.bodyType = "static"
 			self.x = -999
 			self.y = -999
+			Runtime:removeEventListener("onPlayerLadderCollisionBegan", self)
+			Runtime:removeEventListener("onPlayerLadderCollisionEnded", self)
 		end
 	end
 
@@ -164,6 +177,16 @@ function Player:new()
 		self.moving = false
 	end
 
+	function player:startClimbing()
+		self.climbing = true
+		self.bodyType = "kinematic"
+	end
+
+	function player:stopClimbing()
+		self.climbing = false
+		self.bodyType = "dynamic"
+	end
+
 	function player:showGrappleProgress(current, total)
 		local bar
 		if self.grappleProgressBar then
@@ -182,6 +205,16 @@ function Player:new()
 	function player:hideGrappleProgress()
 		if self.grappleProgressBar then
 			self.grappleProgressBar.isVisible = false
+		end
+	end
+	
+	function player:onPlayerLadderCollisionBegan(event)
+		self.lastLadder = event.target
+	end
+
+	function player:onPlayerLadderCollisionEnded(event)
+		if event.target ~= self.lastLadder then
+			self.lastLadder = nil
 		end
 	end
 

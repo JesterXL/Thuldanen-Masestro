@@ -38,6 +38,18 @@ function Treasure:new()
 		self.bodyType = "dynamic"
 	end
 
+	function box:onCaptured()
+		self.isVisible = false
+		local t = {}
+		function t:timer()
+			box.bodyType = "kinematic"
+			box.x = -999
+			box.y = -999
+		end
+		timer.performWithDelay(100, t)
+		-- TODO: destroy
+	end
+
 	function box:tick(time)
 		local floatSpeed
 		
@@ -47,22 +59,29 @@ function Treasure:new()
 		local deltaX = self.x - player.x
 		local deltaY = self.y - player.y
 
-		if math.abs(deltaY) > 120 then
-			floatSpeed = -13
-		else
-			floatSpeed = -14
-		end
+		--if math.abs(deltaY) > 120 then
+		--	floatSpeed = -13
+		--else
+		--	floatSpeed = -14
+		--end
 		if math.abs(deltaY) < 60 then
-			self.y = self.y - 1
+			self.y = self.y - 0.5
+		elseif math.abs(deltaY) > 190 then
+			self.y = self.y + 0.5
 		end
+
 		if math.abs(deltaX) > 190 then
 			speed = player.speed / 10
 		else
-			speed = 0.1
+			speed = 0.05
 		end
 		--self:applyForce(0, floatSpeed, 0, self.y + self.height / 2)
-		if math.abs(deltaX) <= 120 then
+		if math.abs(deltaX) <= 120 and math.abs(deltaX) <= 120 then
 			speed = 0.01
+		end
+
+		if math.abs(deltaY) > 120 then
+			speed = 0.5
 		end
 
 		local dist = math.sqrt((deltaX * deltaX) + (deltaY * deltaY))

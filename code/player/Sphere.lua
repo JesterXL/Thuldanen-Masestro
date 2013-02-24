@@ -25,6 +25,7 @@ function Sphere:new()
 	}
 
 	local sphere = display.newSprite(sheet, sequenceData)
+	sphere.classType = "Sphere"
 	sphere:pause()
 	sphere:setFrame(1)
 

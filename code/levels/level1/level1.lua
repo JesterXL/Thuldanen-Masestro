@@ -103,6 +103,56 @@ function M.physicsData(scale)
                     
 		}
 		
+		, 
+		["floor-5"] = {
+                    
+                    
+                    
+                    
+                    {
+                    pe_fixture_id = "", density = 2, friction = 0.5, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65535, groupIndex = 0 },
+                    shape = {   -301, -76  ,  301, 29  ,  122, 75  ,  -301, 74  }
+                    }
+                     ,
+                    {
+                    pe_fixture_id = "", density = 2, friction = 0.5, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65535, groupIndex = 0 },
+                    shape = {   122, 75  ,  301, 29  ,  301, 76  }
+                    }
+                    
+                    
+                    
+		}
+		
+		, 
+		["floor-4"] = {
+                    
+                    
+                    
+                    
+                    {
+                    pe_fixture_id = "floor-4", density = 2, friction = 0.5, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65535, groupIndex = 0 },
+                    shape = {   -220.5, -143.5  ,  -57.5, -137.5  ,  -217.5, -46.5  ,  -321.5, -122.5  }
+                    }
+                     ,
+                    {
+                    pe_fixture_id = "floor-4", density = 2, friction = 0.5, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65535, groupIndex = 0 },
+                    shape = {   -57.5, -137.5  ,  114.5, -64.5  ,  321.5, 144.5  ,  -217.5, 139.5  ,  -217.5, -46.5  }
+                    }
+                     ,
+                    {
+                    pe_fixture_id = "floor-4", density = 2, friction = 0.5, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65535, groupIndex = 0 },
+                    shape = {   321.5, 144.5  ,  114.5, -64.5  ,  321.5, -5.5  }
+                    }
+                    
+                    
+                    
+		}
+		
 	} }
 
         -- apply scale factor

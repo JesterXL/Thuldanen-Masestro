@@ -7,7 +7,7 @@ function MoveLeftButton:new()
 		if p == "began" then
 			Runtime:dispatchEvent({name = "onMovePlayerLeftStarted", target = event.target})
 			return true
-		elseif p == "ended" or p == "cancelled" then
+		else
 			Runtime:dispatchEvent({name = "onMovePlayerLeftEnded", target = event.target})
 			return true
 		end

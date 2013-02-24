@@ -77,7 +77,6 @@ function ProgressBar:new(backRed, backGreen, backBlue, frontRed, frontGreen, fro
 		end
 	end
 
-
  
 	return group
 end

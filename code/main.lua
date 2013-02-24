@@ -28,8 +28,8 @@ local function setupGlobals()
 end
 
 local function setupPhysics()
-	--physics.setDrawMode("hybrid")
-	physics.setDrawMode("normal")
+	physics.setDrawMode("hybrid")
+	--physics.setDrawMode("normal")
 	physics.start()
 	physics.setGravity(0, 9.8)
 	physics.setPositionIterations( 10 )
@@ -944,6 +944,12 @@ local function testProgressBar()
 	bar:setProgress(5, 10)
 	--bar:showProgressAdjusted(5, 4, 10)
 	--bar:showProgressAdjusted(5, 7, 10)
+
+	local t = {}
+	function t:timer()
+		bar:setProgress(8, 10)
+	end
+	timer.performWithDelay(1000, t)
 end
 
 setupGlobals()
