@@ -63,6 +63,7 @@ function PlayerClimbLadderState:new()
 		end
 
 		local ladderTop = (lastLadder.y - lastLadder.height / 2) - (player.height / 2)
+		local ladderBottom = lastLadder.y + lastLadder.height / 2
 		local targetX = player.x
 		local targetY
 		if player.climbDirection == "down" then
@@ -75,6 +76,12 @@ function PlayerClimbLadderState:new()
 
 		if targetY < ladderTop then
 			player.y = ladderTop
+			return true
+		end
+
+		print("targetY:", targetY, ", ladderBottom:", ladderBottom, ", player.y:", player.y, ", ladder.y:", lastLadder.y)
+		if targetY + player.height > ladderBottom then
+			player.y = ladderBottom - player.height
 			return true
 		end
 

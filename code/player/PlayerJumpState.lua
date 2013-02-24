@@ -59,6 +59,7 @@ function PlayerJumpState:new(stateName)
 	
 	function state:collision(event)
 		local player = self.entity
+		if player == nil then return false end
 		local classType = event.other.classType
 		if classType == "Floor" then
 			player:removeEventListener("collision", self)

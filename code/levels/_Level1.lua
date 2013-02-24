@@ -38,7 +38,7 @@ function Level1:new()
 		floor2.x = floor1.x + floor1.width
 		floor2.y = floor1.y + floor1.height - floor2.height
 		floor4.x = floor2.x + floor2.width
-		floor4.x = floor4.x - 60
+		floor4.x = floor4.x - 120
 		floor4.y = floor2.y + floor2.height - floor4.height
 		floor5.x = floor4.x + floor4.width
 		floor5.y = floor4.y + floor4.height - floor5.height
@@ -71,8 +71,8 @@ function Level1:new()
 		end
 
 		local ladder = Ladder:new()
-		ladder.x = floor4.x
-		ladder.y = 400
+		ladder.x = floor4.x + ladder.width
+		ladder.y = 360
 
 	end
 
