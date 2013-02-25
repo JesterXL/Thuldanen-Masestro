@@ -156,6 +156,7 @@ function LevelView:new()
 		if box then
 			self:onPlayerUnGrappleTreasure()
 			box:onCaptured()
+			self.currentLevel:showPortal()
 		end
 	end
 

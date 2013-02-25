@@ -952,6 +952,13 @@ local function testProgressBar()
 	timer.performWithDelay(1000, t)
 end
 
+local function testPortalSheet()
+	require "sprites.Portal"
+	local portal = Portal:new()
+	portal.x = 200
+	portal.y = 200
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -980,5 +987,6 @@ setupPhysics()
 --testChain2()
 --testVerletChain()
 --testProgressBar()
+--testPortalSheet()
 
 testLevelView()

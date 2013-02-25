@@ -1,6 +1,7 @@
 require "physics"
 require "sprites.Treasure"
 require "sprites.Ladder"
+require "sprites.Portal"
 local parallax = require( "utils.parallax" )
 
 Level1 = {}
@@ -77,8 +78,16 @@ function Level1:new()
 		local floor3bg = getFloorBackground("floor-3")
 		local floor4bg = getFloorBackground("floor-4")
 
+
+
 		mainGroup:insert(sphere)
 		mainGroup:insert(player)
+
+		local portal = Portal:new()
+		portal.x = self.sphereStartX + 20
+		portal.y = self.sphereStartY + 20
+		portal:hide()
+		self.portal = portal
 
 		local level1PhysicsData = (require "levels.level1.level1").physicsData(1.0)
 		local function getFloor(name, x, y)
@@ -190,6 +199,10 @@ function Level1:new()
 
 	function level:move(x, y)
 		self.parallaxScene:move(x, y)
+	end
+
+	function level:showPortal()
+		self.portal:show()
 	end
 
 	return level
