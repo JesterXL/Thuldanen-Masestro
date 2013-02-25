@@ -962,6 +962,22 @@ local function testPortalSheet()
 
 end
 
+local function testTreasure()
+
+	local leftWall = getWall(30, stage.height)	
+	local rightWall = getWall(30, stage.height)
+	rightWall.x = stage.width - 30
+	local floor = getWall(stage.width, 30)
+	floor.y = stage.height - 30
+
+
+	require "sprites.Treasure"
+	local box = Treasure:new()
+	box.x = 200
+	box.y = 300
+	box:activateLevitation()
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -991,5 +1007,6 @@ setupPhysics()
 --testVerletChain()
 --testProgressBar()
 --testPortalSheet()
+--testTreasure()
 
 testLevelView()

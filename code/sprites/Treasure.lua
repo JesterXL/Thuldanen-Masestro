@@ -2,16 +2,41 @@ Treasure = {}
 
 function Treasure:new()
 
-	local box = display.newImage("sprites/Treasure.png")
+	local box = display.newGroup()
 	box.grappled = false -- indicates if a player has attached a chain/grapple to it
 	box.player = nil
 
 	function box:init()
-		mainGroup:insert(box)
+		mainGroup:insert(self)
+		local boxImage = display.newImage("sprites/Treasure.png")
+		box.boxImage = boxImage
+		self:insert(boxImage)
+		boxImage.x = 0
+		boxImage.y = 0
+		
 		local treasurePhysicsData = (require "sprites.TreasurePhysicsData").physicsData(1.0)
 		physics.addBody(self, "dynamic", treasurePhysicsData:get("treasure"))
 		self.isFixedRotation = true
 		self:addEventListener("touch", self)
+
+		local disk = graphics.newImageSheet("sprites/treasure-disk-sheet.png", {width=240, height=160, numFrames=64})
+		local sequenceData = 
+		{
+			{
+				name="spin",
+				start=1,
+				count=64,
+				time=2000,
+			}
+		}
+
+		local diskSprite = display.newSprite(disk, sequenceData)
+		self:insert(diskSprite)
+		self.diskSprite = diskSprite
+		diskSprite:setSequence("spin")
+		diskSprite.isVisible = false
+		diskSprite.y = boxImage.y + boxImage.height / 2 - 6
+		diskSprite.x = diskSprite.x - 10
 	end
 
 	function box:touch(event)
@@ -30,15 +55,20 @@ function Treasure:new()
 		gameLoop:addLoop(self)
 		self.player = player
 		self.bodyType = "kinematic"
+		self.diskSprite.isVisible = true
+		self.diskSprite:play()
 	end
 
 	function box:deactivateLevitation()
 		gameLoop:removeLoop(self)
 		self.player = nil
 		self.bodyType = "dynamic"
+		self.diskSprite.isVisible = false
+		self.diskSprite:pause()
 	end
 
 	function box:onCaptured()
+		self.diskSprite:pause()
 		self.isVisible = false
 		local t = {}
 		function t:timer()
