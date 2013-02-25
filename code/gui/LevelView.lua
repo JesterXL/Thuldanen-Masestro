@@ -18,6 +18,7 @@ function LevelView:new()
 	level.lastGrappledTreasureBox = nil
 	level.lastGrappleChain = nil
 	level.sphereCollisionDelegate = nil
+	level.portalEnabled = false
 
 	function level:init()
 		self.sphere = Sphere:new()
@@ -40,6 +41,7 @@ function LevelView:new()
 		Runtime:addEventListener("onPlayerGrappleTreasure", self)
 		Runtime:addEventListener("onPlayerGrappledTreasureSuccessfully", self)
 		Runtime:addEventListener("onPlayerUnGrappleTreasure", self)
+		Runtime:addEventListener("onSphereTouchedPortal", self)
 	end
 
 	function level:loadLevel(levelRequirePath)
@@ -60,6 +62,9 @@ function LevelView:new()
 		end
 
 		self:startScrollScreen()
+
+		self:setPortalEnabled(false)
+		self.playerControls.isVisible = true
 	end
 
 	function level:scrollScreen()
@@ -156,11 +161,28 @@ function LevelView:new()
 		if box then
 			self:onPlayerUnGrappleTreasure()
 			box:onCaptured()
-			self.currentLevel:showPortal()
+			self:setPortalEnabled(true)
 		end
 	end
 
+	function level:setPortalEnabled(enabled)
+		self.portalEnabled = enabled
+		if enabled then
+			self.currentLevel:showPortal()
+		else
+			self.currentLevel:hidePortal()
+		end
+	end
+
+	function level:onSphereTouchedPortal(event)
+		self.sphere:disable()
+		self.player:disable()
+		self.playerControls.isVisible = false
+	end
+
 	level:init()
+
+
 
 	return level
 end

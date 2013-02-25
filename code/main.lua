@@ -957,6 +957,9 @@ local function testPortalSheet()
 	local portal = Portal:new()
 	portal.x = 200
 	portal.y = 200
+	portal:show()
+
+
 end
 
 setupGlobals()

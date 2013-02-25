@@ -205,6 +205,10 @@ function Level1:new()
 		self.portal:show()
 	end
 
+	function level:hidePortal()
+		self.portal:hide()
+	end
+
 	return level
 
 end
