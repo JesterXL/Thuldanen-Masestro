@@ -13,6 +13,7 @@ function PlayerJumpState:new(stateName)
 	state.jumpGravity = nil
 	state.lastJump = nil
 	state.JUMP_INTERVAL = 100
+	state.POINT_OF_NO_RETURN = 5 * 1000
 	state.xForce = nil
 	state.jumpStartY = nil
 	
@@ -41,6 +42,11 @@ function PlayerJumpState:new(stateName)
 				if self.jumpGravity > 9.8 then self.jumpGravity = 9.8 end
 				if self.jumpGravity > 0 then
 					player:addEventListener("collision", self)
+				end
+
+				if system.getTimer() - self.lastJump >= self.POINT_OF_NO_RETURN then
+					player:removeEventListener("collision", self)
+					self.stateMachine:changeStateToAtNextTick("ready")
 				end
 			end
 		else

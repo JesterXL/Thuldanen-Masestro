@@ -49,7 +49,7 @@ function LevelView:new()
 		end
 		local level = require(levelRequirePath):new()
 		self.currentLevel = level
-		level:build()
+		level:build(self.sphere, self.player)
 		self.sphere.x = level.sphereStartX
 		self.sphere.y = level.sphereStartY
 
@@ -71,8 +71,11 @@ function LevelView:new()
 		else
 			player = self.sphere
 		end
-		mainGroup.x = w2 - player.x
-
+		local lastX = mainGroup.x
+		local finalScrollX = math.min(0, w2 - player.x)
+		finalScrollX = math.max(finalScrollX, -(mainGroup.width - stage.width - 20))
+		mainGroup.x = finalScrollX
+		self.currentLevel:move(mainGroup.x - lastX, 0)
 	end	
 	
 	function level:startScrollScreen()

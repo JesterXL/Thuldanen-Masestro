@@ -29,7 +29,7 @@ end
 
 local function setupPhysics()
 	--physics.setDrawMode("hybrid")
-	physics.setDrawMode("normal")
+	--physics.setDrawMode("normal")
 	physics.start()
 	physics.setGravity(0, 9.8)
 	physics.setPositionIterations( 10 )
@@ -775,9 +775,9 @@ local function testPlayerControls()
 end
 
 local function testLevelView()
-	local bg = display.newRect(0, 0, stage.width, stage.height)
-	bg:setFillColor(200, 200, 200)
-	mainGroup:insert(bg)
+	--local bg = display.newRect(0, 0, stage.width, stage.height)
+	--bg:setFillColor(200, 200, 200)
+	--mainGroup:insert(bg)
 
 	require "gui.LevelView"
 	local levelView = LevelView:new()
