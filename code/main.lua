@@ -978,6 +978,50 @@ local function testTreasure()
 	box:activateLevitation()
 end
 
+local function testLevelComplete()
+	local sheet = graphics.newImageSheet("gui/level-complete-sheet.png", {width=320, height=214, numFrames=41})
+	local sequenceData = 
+	{
+		{
+			name="show",
+			start=1,
+			count=41,
+			time=2350,
+		}
+	}
+
+	local sprite = display.newSprite(sheet, sequenceData)
+	sprite:setSequence("show")
+	sprite:play()
+	sprite.x = 300
+	sprite.y = 300
+
+end
+
+local function testCoverTurn()
+	require "gui.SongBook"
+	local book = SongBook:new()
+	book.fsm:changeState("page1")
+
+	local t = {}
+	function t:timer()
+		book.fsm:changeState("page2")
+	end
+	timer.performWithDelay(2000, t)
+
+	local cow = {}
+	function cow:timer()
+		book.fsm:changeState("page1")
+	end
+	timer.performWithDelay(4000, cow)
+
+	local norp = {}
+	function norp:timer()
+		book.fsm:changeState("cover")
+	end
+	timer.performWithDelay(6000, norp)
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -1008,5 +1052,7 @@ setupPhysics()
 --testProgressBar()
 --testPortalSheet()
 --testTreasure()
+--testLevelComplete()
+testCoverTurn()
 
-testLevelView()
+--testLevelView()

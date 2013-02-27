@@ -118,8 +118,9 @@ function Level1:new()
 		floor3.x = floor3.x - 120
 		floor3.y = floor3.y + 4
 
-		floor4.x = floor3.x + floor3.width - 1
+		floor4.x = floor3.x + floor3.width - 2
 		floor4.y = floor3.y + floor3.height - floor4.height
+
 
 		floor5.x = floor4.x + floor4.width - 8
 		floor5.y = floor4.y + floor4.height - floor5.height
