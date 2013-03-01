@@ -8,8 +8,10 @@ function SoundManager:new()
 	local manager = {}
 	manager.notesVolume = 1
 	manager.effectsVolume = 1 -- 0.3
+	manager.musicVolume = 1
 
 	manager.CHANNEL_NOTES = 1
+	manager.MUSIC_CHANNEL = 2
 	manager.CHANNEL_EFFECTS = 3
 
 	manager.gravityCSound = nil
@@ -20,6 +22,7 @@ function SoundManager:new()
 	manager.gravityASound = nil
 	manager.gravityBSound = nil
 	manager.gravityCHIGHSound = nil
+	manager.levelEndMusic = nil
 	
 	function manager:init()
 		self:reserveChannels()
@@ -50,6 +53,7 @@ function SoundManager:new()
 		self.gravityASound = audio.loadSound("audio/notes/gravity/gravity-a.mp3")
 		self.gravityBSound = audio.loadSound("audio/notes/gravity/gravity-b.mp3")
 		self.gravityCHIGHSound = audio.loadSound("audio/notes/gravity/gravity-c-high.mp3")
+		self.levelEndMusic = audio.loadSound("audio/level-end.wav")
 	end
 
 	function manager:playEffectSound(soundFile)
@@ -67,6 +71,12 @@ function SoundManager:new()
 		local name = "gravity" .. string.upper(note) .. "Sound"
 		local handle = self[name];
 		self:playNoteSound(handle)
+	end
+
+	function manager:playLevelEndMusic()
+		audio.stop(self.CHANNEL_MUSIC)
+		audio.play(self.levelEndMusic, {channel=self.CHANNEL_MUSIC})
+		audio.setVolume(self.musicVolume, {channel=self.CHANNEL_MUSIC})
 	end
 
 	return manager

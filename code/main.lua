@@ -979,22 +979,8 @@ local function testTreasure()
 end
 
 local function testLevelComplete()
-	local sheet = graphics.newImageSheet("gui/level-complete-sheet.png", {width=320, height=214, numFrames=41})
-	local sequenceData = 
-	{
-		{
-			name="show",
-			start=1,
-			count=41,
-			time=2350,
-		}
-	}
-
-	local sprite = display.newSprite(sheet, sequenceData)
-	sprite:setSequence("show")
-	sprite:play()
-	sprite.x = 300
-	sprite.y = 300
+	require "gui.LevelCompletePopup"
+	local pop = LevelCompletePopup:new()
 
 end
 

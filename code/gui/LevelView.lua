@@ -5,6 +5,7 @@ require "sprites.Chain"
 require "sprites.VerletChain"
 require "gui.SideBar"
 require "gui.SongBook"
+require "gui.LevelCompletePopup"
 
 LevelView = {}
 
@@ -74,6 +75,7 @@ function LevelView:new()
 
 		self:setPortalEnabled(false)
 		self.playerControls.isVisible = true
+		self.sideBar.isVisible = true
 	end
 
 	function level:scrollScreen()
@@ -187,6 +189,10 @@ function LevelView:new()
 		self.sphere:disable()
 		self.player:disable()
 		self.playerControls.isVisible = false
+		self.sideBar.isVisible = false
+		local popup = LevelCompletePopup:new()
+		popup:addEventListener("onNextLevelButtonTouched", self)
+		self.popup = popup
 	end
 
 	function level:onSongBookButtonTouched(event)
@@ -209,8 +215,20 @@ function LevelView:new()
 		end
 	end
 
-	level:init()
+	function level:onNextLevelButtonTouched(event)
+		self.popup:removeEventListener("onNextLevelButtonTouched", self)
+		self.popup:destroy()
+		self.popup = nil
+		self:dispatchEvent({name="onLoadNextLevel"})
+	end
 
+	level:init()
+	local t = {}
+	function t:timer()
+		level:onSphereTouchedPortal()
+	end
+
+	timer.performWithDelay(2000, t)
 
 
 	return level
