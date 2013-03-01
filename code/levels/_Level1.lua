@@ -13,6 +13,7 @@ function Level1:new()
 	level.sphereStartY = 420
 	level.sphereStart = true
 	level.treasures = {{x=2420, y=400}}
+	--level.treasures = {{x=500, y=400}}
 	level.treasureBoxes = {}
 	level.parallaxScene = nil
 

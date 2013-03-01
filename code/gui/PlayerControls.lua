@@ -10,6 +10,8 @@ function PlayerControls:new()
 	controls.notes = nil
 	controls.fsm = nil
 
+	
+
 	function controls:init()
 		local notes = Notes:new()
 		local outOfSphereControls = OutOfSphereControls:new()
@@ -25,7 +27,7 @@ function PlayerControls:new()
 		self.fsm:addState("notes", {from="*"})
 		self.fsm:addState("out", {from="*"})
 		self.fsm:setInitialState("notes")
-		Runtime:addEventListener("onStateMachineStateChanged", self)
+		self.fsm:addEventListener("onStateMachineStateChanged", self)
 	end
 
 	function controls:onStateMachineStateChanged(event)

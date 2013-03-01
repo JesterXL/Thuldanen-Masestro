@@ -28,7 +28,7 @@ local function setupGlobals()
 end
 
 local function setupPhysics()
-	--physics.setDrawMode("hybrid")
+	physics.setDrawMode("hybrid")
 	--physics.setDrawMode("normal")
 	physics.start()
 	physics.setGravity(0, 9.8)
@@ -1053,6 +1053,6 @@ setupPhysics()
 --testPortalSheet()
 --testTreasure()
 --testLevelComplete()
-testCoverTurn()
+--testCoverTurn()
 
---testLevelView()
+testLevelView()

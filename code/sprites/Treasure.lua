@@ -5,7 +5,6 @@ function Treasure:new()
 	local box = display.newGroup()
 	box.grappled = false -- indicates if a player has attached a chain/grapple to it
 	box.player = nil
-	box.playerTooFar = false
 	box.speed = 0.1
 
 	function box:init()
@@ -55,6 +54,7 @@ function Treasure:new()
 
 	function box:activateLevitation(player)
 		gameLoop:addLoop(self)
+		self:addEventListener("collision", self)
 		self.player = player
 		self.bodyType = "kinematic"
 		self.diskSprite.isVisible = true
@@ -63,6 +63,7 @@ function Treasure:new()
 
 	function box:deactivateLevitation()
 		gameLoop:removeLoop(self)
+		self:removeEventListener("collision", self)
 		self.player = nil
 		self.bodyType = "dynamic"
 		self.diskSprite.isVisible = false
@@ -85,19 +86,16 @@ function Treasure:new()
 	function box:tick(time)
 		local player = self.player
 		local deltaX = self.x - player.x
-		local deltaY = self.y - player.y
+		local deltaY = self.y - (player.y - 60)
 
 		local dist = math.sqrt((deltaX * deltaX) + (deltaY * deltaY))
 
 		if dist > 190 then
-			self.playerTooFar = true
-			self.speed = self.speed + 1
+			self.speed = self.speed + 0.01
 		elseif dist < 60 then
-			self.playerTooFar = false
-			self.speed = 0
-		else
-			self.playerTooFar = false
-			self.speed = 0
+			if self.speed > 0.1 then
+				self.speed = self.speed - 0.01
+			end
 		end
 
 		local moveX = self.speed * (deltaX / dist) * time
@@ -105,8 +103,6 @@ function Treasure:new()
 
 		self.x = self.x - moveX
 		self.y = self.y - moveY
-
-
 	end
 
 	box:init()
