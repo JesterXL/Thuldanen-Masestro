@@ -93,12 +93,12 @@ function Sphere:new()
 
 	function sphere:jumpRight()
 		print("sphere jump right")
-		self:applyLinearImpulse(60, 300, sphere.x, sphere.y)
+		self:applyLinearImpulse(1000, 5000, sphere.x, sphere.y)
 	end
 
 	function sphere:jumpLeft()
 		print("sphere jump left")
-		self:applyLinearImpulse(-60, 300, sphere.x, sphere.y)
+		self:applyLinearImpulse(-1000, 5000, sphere.x, sphere.y)
 	end
 
 	function sphere:enterFrame(e)

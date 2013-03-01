@@ -22,11 +22,12 @@ function Notes:new()
 		notesImage.x = 0
 		notesImage.y = 0
 
-		local max = 9
+		-- TODO: this should be a total of 9, but 4 for now
+		local max = 4
 		local i
 		local startX = 3
 		local notes = {"c", "d", "e", "f", "g", "a", "b", "chigh"}
-		for i=1,#notes do
+		for i=1,max do
 			local button = self:createButton(notes[i], startX, 46, 119, 60)
 			button:addEventListener("onNoteTouched", self)
 			startX = startX + button.width

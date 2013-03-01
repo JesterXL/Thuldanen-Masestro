@@ -7,7 +7,7 @@ function NotesPM:new(view)
 	model.moveRightNotes = {"d", "e"}
 	model.moveLeftNotes = {"e", "d"}
 	model.jumpRightNotes = {"c", "d", "e"}
-	model.jumpLeftNotes = {"d", "e", "c"}
+	model.jumpLeftNotes = {"e", "d", "c"}
 
 	function model:parseNotes(notesArray)
 		if self:matchNotesAndLength(self.stopNotes, notesArray) == true then

@@ -3,6 +3,8 @@ require "player.Player"
 require "gui.PlayerControls"
 require "sprites.Chain"
 require "sprites.VerletChain"
+require "gui.SideBar"
+require "gui.SongBook"
 
 LevelView = {}
 
@@ -13,6 +15,9 @@ function LevelView:new()
 	level.player = nil
 	level.scrollScreenTable = nil
 	level.playerControls = nil
+	level.sideBar = nil
+	level.songBook = nil
+
 	level.currentLevel = nil
 	-- TODO: this could be a memory leak if the level is destroyed and this box hangs around
 	level.lastGrappledTreasureBox = nil
@@ -37,11 +42,15 @@ function LevelView:new()
 		self.playerControls = PlayerControls:new()
 		self:insert(self.playerControls)
 
+		self.sideBar = SideBar:new()
+		self:insert(self.sideBar)
+
 		Runtime:addEventListener("onPlayerEnterExitSphere", self)
 		Runtime:addEventListener("onPlayerGrappleTreasure", self)
 		Runtime:addEventListener("onPlayerGrappledTreasureSuccessfully", self)
 		Runtime:addEventListener("onPlayerUnGrappleTreasure", self)
 		Runtime:addEventListener("onSphereTouchedPortal", self)
+		Runtime:addEventListener("onSongBookButtonTouched", self)
 	end
 
 	function level:loadLevel(levelRequirePath)
@@ -178,6 +187,26 @@ function LevelView:new()
 		self.sphere:disable()
 		self.player:disable()
 		self.playerControls.isVisible = false
+	end
+
+	function level:onSongBookButtonTouched(event)
+		if self.songBook == nil then
+			local book = SongBook:new()
+			self:insert(book)
+			book.fsm:setState("page1")
+			self.songBook = book
+			function book:touch(event)
+				if event.phase == "ended" then
+					level:onSongBookButtonTouched(event)
+					return true
+				end
+			end
+			book:addEventListener("touch", book)
+			self.sideBar:toFront()
+		else
+			self.songBook:destroy()
+			self.songBook = nil
+		end
 	end
 
 	level:init()

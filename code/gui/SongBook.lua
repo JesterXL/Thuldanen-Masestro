@@ -121,7 +121,27 @@ function SongBook:new()
 	end
 
 	function book:destroy()
+		self.page2:removeSelf()
+		self.page2 = nil
 
+		self.page1:removeEventListener("sprite", self.page1)
+		self.page1:removeSelf()
+		self.page1 = nil
+
+		self.page1Sheet = nil
+		self.page1SequenceData = nil
+
+		self.cover:removeEventListener("sprite", self.cover)
+		self.cover:removeSelf()
+		self.cover = nil
+
+		self.coverSheet = nil
+		self.coverSequenceData = nil
+
+		self.fsm:removeEventListener("onStateMachineStateChanged", self)
+		self.fsm = nil
+
+		self:removeSelf()
 	end
 
 	book:init()

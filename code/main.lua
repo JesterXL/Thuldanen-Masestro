@@ -28,7 +28,7 @@ local function setupGlobals()
 end
 
 local function setupPhysics()
-	physics.setDrawMode("hybrid")
+	--physics.setDrawMode("hybrid")
 	--physics.setDrawMode("normal")
 	physics.start()
 	physics.setGravity(0, 9.8)
@@ -1022,6 +1022,11 @@ local function testCoverTurn()
 	timer.performWithDelay(6000, norp)
 end
 
+local function testSideBar()
+	require "gui.SideBar"
+	local bar = SideBar:new()
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -1054,5 +1059,6 @@ setupPhysics()
 --testTreasure()
 --testLevelComplete()
 --testCoverTurn()
+--testSideBar()
 
 testLevelView()
