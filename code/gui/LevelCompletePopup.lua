@@ -36,6 +36,8 @@ function LevelCompletePopup:new()
 		self.sheet = sheet
 		self.sequenceData = sequenceData
 		self.sprite = sprite
+		sprite.alpha = 0
+		sprite.tweenID = transition.to(sprite, {time=500, alpha=1})
 
 		function sprite:sprite(event)
 			if event.phase == "ended" then
@@ -88,9 +90,13 @@ function LevelCompletePopup:new()
 
 		self.sheet = nil
 		self.sequenceData = nil
+		
+		transition.cancel(self.sprite.tweenID)
+		self.sprite.tweenID = nil
 		self.sprite:pause()
 		self.sprite:removeSelf()
 		self.sprite = nil
+
 
 		self.button.tween = nil
 		self.button:removeSelf()

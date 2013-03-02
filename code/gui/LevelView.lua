@@ -6,6 +6,7 @@ require "sprites.VerletChain"
 require "gui.SideBar"
 require "gui.SongBook"
 require "gui.LevelCompletePopup"
+require "gui.TreasureObtainedAnimation"
 
 LevelView = {}
 
@@ -172,6 +173,7 @@ function LevelView:new()
 		if box then
 			self:onPlayerUnGrappleTreasure()
 			box:onCaptured()
+			TreasureObtainedAnimation:new()
 			self:setPortalEnabled(true)
 		end
 	end
@@ -223,13 +225,6 @@ function LevelView:new()
 	end
 
 	level:init()
-	local t = {}
-	function t:timer()
-		level:onSphereTouchedPortal()
-	end
-
-	timer.performWithDelay(2000, t)
-
 
 	return level
 end

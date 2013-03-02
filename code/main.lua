@@ -1013,6 +1013,11 @@ local function testSideBar()
 	local bar = SideBar:new()
 end
 
+local function testTreasureObtained()
+	require "gui.TreasureObtainedAnimation"
+	TreasureObtainedAnimation:new()
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -1046,5 +1051,6 @@ setupPhysics()
 --testLevelComplete()
 --testCoverTurn()
 --testSideBar()
+--testTreasureObtained()
 
 testLevelView()
