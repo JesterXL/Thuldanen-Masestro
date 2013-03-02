@@ -1020,6 +1020,48 @@ local function testTreasureObtained()
 	TreasureObtainedAnimation:new()
 end
 
+local function testSideBarCrystalSwitch()
+	local bg = display.newImage("gui/side-bar-images/side-bar-background-gravity.png")
+	local bgElectric = display.newImage("gui/side-bar-images/side-bar-background-electricity.png")
+	bgElectric.isVisible = false
+	local sheet = graphics.newImageSheet("gui/side-bar-images/side-bar-sheet.png", {width=480, height=320, numFrames=24})
+		local sequenceData = 
+		{
+			{
+				name="show",
+				start=1,
+				count=24,
+				time=2000,
+				loopCount=1
+			}
+		}
+
+		local sprite = display.newSprite(sheet, sequenceData)
+		sprite:setReferencePoint(display.TopLeftReferencePoint)
+		sprite.xScale = 2
+		sprite.yScale = 2
+		sprite:setSequence("show")
+		
+		sprite.x = stage.width - (sprite.width * 2)
+		sprite.y = stage.height - (sprite.height * 2)
+		sprite.isVisible = false
+		function sprite:sprite(e)
+			if e.phase == "ended" then
+				self.isVisible = false
+				bg.isVisible = false
+				bgElectric.isVisible = true
+			end
+		end
+		sprite:addEventListener("sprite", sprite)
+
+		local t = {}
+		function t:timer()
+			sprite:play()
+			sprite.isVisible = true
+		end
+		timer.performWithDelay(2000, t)
+end
+
 setupGlobals()
 setupPhysics()
 --backgroundRect = display.newRect(stage.x, stage.y, stage.width, stage.height)
@@ -1054,5 +1096,6 @@ setupPhysics()
 --testCoverTurn()
 --testSideBar()
 --testTreasureObtained()
+testSideBarCrystalSwitch()
 
-testLevelView()
+--testLevelView()
