@@ -28,7 +28,7 @@ local function setupGlobals()
 end
 
 local function setupPhysics()
-	--physics.setDrawMode("hybrid")
+	physics.setDrawMode("hybrid")
 	--physics.setDrawMode("normal")
 	physics.start()
 	physics.setGravity(0, 9.8)
@@ -781,7 +781,9 @@ local function testLevelView()
 
 	require "gui.LevelView"
 	local levelView = LevelView:new()
-	levelView:loadLevel("levels._Level1")
+	--levelView:loadLevel("levels._Level1")
+	levelView:loadLevel("levels._Level2")
+
 end
 
 local function testPlayerSheet()
